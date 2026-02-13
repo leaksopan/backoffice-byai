@@ -1,0 +1,11 @@
+{
+    "name": "AdminCenter",
+    "alias": "admincenter",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\AdminCenter\\Providers\\AdminCenterServiceProvider"
+    ],
+    "files": []
+}

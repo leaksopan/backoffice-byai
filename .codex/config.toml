@@ -1,0 +1,16 @@
+# Project-scoped Codex settings (loaded when project is trusted)
+
+approval_policy = "on-request"
+
+# Suntik instruksi tambahan singkat (opsional)
+developer_instructions = """
+Follow AGENTS.md and .ai/standards.md. Prefer small, verifiable steps.
+"""
+
+# (Opsional) batasi sandbox sesuai kebutuhan kamu
+# sandbox_mode = "workspace-write"
+
+[mcp_servers.laravel-boost]
+command = "php"
+args = ["artisan", "boost:mcp"]
+cwd = "D:\\Kerja\\client\\DEV\\modulify"

@@ -1,0 +1,168 @@
+{
+  "name": "Modulify Standards",
+  "version": "1.0.0",
+  "naming": {
+    "moduleFolder": "StudlyCase",
+    "moduleKey": "kebab-case",
+    "phpClass": "StudlyCase",
+    "phpVariable": "camelCase",
+    "dbTable": "snake_case_plural",
+    "dbColumn": "snake_case",
+    "routeName": "dot.notation"
+  },
+  "coreRoutes": [
+    {
+      "method": "GET",
+      "path": "/dashboard-modules",
+      "name": "modules.dashboard",
+      "middleware": ["auth"],
+      "controller": "App\\Http\\Controllers\\ModulesDashboardController@index"
+    },
+    {
+      "method": "GET",
+      "path": "/m/{moduleKey}",
+      "name": null,
+      "middleware": ["auth", "EnsureModuleAccess"],
+      "controller": "App\\Http\\Controllers\\ModuleEntryController@enter"
+    }
+  ],
+  "middleware": {
+    "ensureModuleAccess": {
+      "routeParam": "moduleKey",
+      "checks": [
+        { "type": "exists", "onFail": 404 },
+        { "type": "is_active", "onFail": 403 },
+        { "type": "permission", "permissionTemplate": "access {moduleKey}", "onFail": 403 }
+      ]
+    }
+  },
+  "permissions": {
+    "template": [
+      "access {moduleKey}",
+      "{moduleKey}.view",
+      "{moduleKey}.create",
+      "{moduleKey}.edit",
+      "{moduleKey}.delete"
+    ],
+    "rules": {
+      "moduleAreaRequires": "access {moduleKey}",
+      "viewRequires": "{moduleKey}.view",
+      "createRequires": "{moduleKey}.create",
+      "editRequires": "{moduleKey}.edit",
+      "deleteRequires": "{moduleKey}.delete"
+    }
+  },
+  "db": {
+    "tables": [
+      {
+        "name": "modules",
+        "columns": [
+          "id",
+          "key:unique",
+          "name",
+          "description:nullable",
+          "icon:nullable",
+          "entry_route",
+          "sort:default(0)",
+          "is_active:default(true)",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      {
+        "name": "module_menus",
+        "columns": [
+          "id",
+          "module_id:fk(modules.id):cascade",
+          "label",
+          "route_name",
+          "icon:nullable",
+          "sort:default(0)",
+          "permission_name:nullable",
+          "group:nullable",
+          "is_active:default(true)",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      {
+        "name": "module_forms",
+        "columns": [
+          "id",
+          "module_id:fk(modules.id):cascade",
+          "key",
+          "name",
+          "schema_json:json",
+          "is_active:default(true)",
+          "created_at",
+          "updated_at"
+        ]
+      }
+    ],
+    "devDatabase": {
+      "driver": "sqlite",
+      "path": "database/database.sqlite"
+    }
+  },
+  "ui": {
+    "auth": "laravel/breeze (blade)",
+    "css": "tailwind",
+    "moduleDashboard": {
+      "url": "/dashboard-modules",
+      "view": "resources/views/modules/dashboard.blade.php",
+      "layout": "resources/views/layouts/modules.blade.php"
+    },
+    "moduleLayout": "resources/views/layouts/module.blade.php"
+  },
+  "sidebar": {
+    "menuVisibility": {
+      "requireActive": true,
+      "permissionNullMeansPublic": true
+    },
+    "groups": ["Main", "Admin"],
+    "adminGroupVisibleIfAnyPermission": [
+      "{moduleKey}.create",
+      "{moduleKey}.edit",
+      "{moduleKey}.delete"
+    ]
+  },
+  "dynamicForm": {
+    "requiredFeatures": ["wizard_steps>=2", "conditional_field", "repeater_items"],
+    "schema": {
+      "rootType": "wizard",
+      "stepsKey": "steps",
+      "conditionalKey": "visibleWhen",
+      "repeaterKey": "repeater",
+      "repeaterItemKey": "itemSchema"
+    }
+  },
+  "apiResponse": {
+    "required": true,
+    "shape": {
+      "success": "boolean",
+      "message": "string",
+      "data": "any",
+      "meta": {
+        "request_id": "string",
+        "timestamp": "iso8601",
+        "pagination": "optional"
+      },
+      "errors": "optional",
+      "error": "optional"
+    },
+    "statusCodes": [200, 201, 204, 400, 401, 403, 404, 409, 422, 500]
+  },
+  "exampleModule": {
+    "moduleName": "ProjectManagement",
+    "moduleKey": "project-management",
+    "routePrefix": "/m/project-management",
+    "routeNamePrefix": "pm",
+    "entryRoute": "pm.dashboard",
+    "routes": [
+      { "method": "GET", "path": "/dashboard", "name": "pm.dashboard", "can": "project-management.view" },
+      { "method": "GET", "path": "/projects", "name": "pm.projects.index", "can": "project-management.view" },
+      { "method": "GET", "path": "/projects/create", "name": "pm.projects.create", "can": "project-management.create" },
+      { "method": "GET", "path": "/settings", "name": "pm.settings", "can": "project-management.edit" }
+    ]
+  }
+}
