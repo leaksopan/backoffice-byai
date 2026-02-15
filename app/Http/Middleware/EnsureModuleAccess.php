@@ -18,7 +18,7 @@ class EnsureModuleAccess
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $moduleKey = $request->route('moduleKey');
+        $moduleKey = $this->resolveModuleKey($request);
 
         if (! $moduleKey) {
             abort(404);
@@ -43,5 +43,23 @@ class EnsureModuleAccess
         $request->attributes->set('activeModule', $module);
 
         return $next($request);
+    }
+
+    private function resolveModuleKey(Request $request): ?string
+    {
+        $fromRoute = $request->route('moduleKey');
+
+        if (is_string($fromRoute) && $fromRoute !== '') {
+            return $fromRoute;
+        }
+
+        $first = $request->segment(1);
+        $second = $request->segment(2);
+
+        if ($first === 'm' && is_string($second) && $second !== '') {
+            return $second;
+        }
+
+        return null;
     }
 }
