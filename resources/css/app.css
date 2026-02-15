@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        --glass-bg: 255 255 255;
+        --glass-border: 226 232 240;
+        --glass-shadow: 15 23 42;
+    }
+
+    .dark {
+        --glass-bg: 15 23 42;
+        --glass-border: 51 65 85;
+        --glass-shadow: 2 6 23;
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+}
+
+@layer utilities {
+    .bg-app-surface {
+        background-image:
+            radial-gradient(120rem 60rem at 0% 0%, rgba(56, 189, 248, 0.14), transparent 55%),
+            radial-gradient(100rem 50rem at 100% 100%, rgba(56, 189, 248, 0.1), transparent 50%),
+            linear-gradient(145deg, #f8fafc, #e2e8f0);
+    }
+
+    .dark .bg-app-surface {
+        background-image:
+            radial-gradient(100rem 50rem at 0% 0%, rgba(14, 116, 144, 0.26), transparent 60%),
+            radial-gradient(100rem 60rem at 100% 100%, rgba(30, 64, 175, 0.2), transparent 55%),
+            linear-gradient(160deg, #020617, #0f172a);
+    }
+
+    .glass-panel {
+        background: rgba(var(--glass-bg), 0.72);
+        border: 1px solid rgba(var(--glass-border), 0.74);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 24px 55px -42px rgba(var(--glass-shadow), 0.5);
+    }
+
+    .glass-soft {
+        background: rgba(var(--glass-bg), 0.58);
+        border: 1px solid rgba(var(--glass-border), 0.64);
+        backdrop-filter: blur(12px);
+    }
+
+    .glass-chip {
+        background: rgba(var(--glass-bg), 0.66);
+        border: 1px solid rgba(var(--glass-border), 0.72);
+    }
+}
