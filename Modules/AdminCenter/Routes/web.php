@@ -4,6 +4,7 @@ use App\Http\Middleware\EnsureModuleAccess;
 use Illuminate\Support\Facades\Route;
 use Modules\AdminCenter\Http\Controllers\AcAssignmentsController;
 use Modules\AdminCenter\Http\Controllers\AcDashboardController;
+use Modules\AdminCenter\Http\Controllers\AcModulesController;
 use Modules\AdminCenter\Http\Controllers\AcPermissionsController;
 use Modules\AdminCenter\Http\Controllers\AcRolesController;
 use Modules\AdminCenter\Http\Controllers\AcUsersController;
@@ -82,6 +83,23 @@ Route::prefix('m/admin-center')
         Route::delete('/permissions/{permission}', [AcPermissionsController::class, 'destroy'])
             ->name('permissions.destroy')
             ->middleware('can:permissions.delete')
+            ->defaults('moduleKey', 'admin-center');
+
+        Route::get('/modules', [AcModulesController::class, 'index'])
+            ->name('modules.index')
+            ->middleware('can:modules.manage')
+            ->defaults('moduleKey', 'admin-center');
+        Route::get('/modules/{module}/edit', [AcModulesController::class, 'edit'])
+            ->name('modules.edit')
+            ->middleware('can:modules.manage')
+            ->defaults('moduleKey', 'admin-center');
+        Route::put('/modules/{module}', [AcModulesController::class, 'update'])
+            ->name('modules.update')
+            ->middleware('can:modules.manage')
+            ->defaults('moduleKey', 'admin-center');
+        Route::patch('/modules/{module}/toggle', [AcModulesController::class, 'toggle'])
+            ->name('modules.toggle')
+            ->middleware('can:modules.manage')
             ->defaults('moduleKey', 'admin-center');
 
         Route::get('/assign/user-roles', [AcAssignmentsController::class, 'userRolesForm'])

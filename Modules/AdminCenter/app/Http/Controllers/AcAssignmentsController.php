@@ -74,7 +74,7 @@ class AcAssignmentsController
     public function moduleAccessMatrix(Request $request): View
     {
         $roles = Role::query()->orderBy('name')->get();
-        $modules = Module::query()->orderBy('sort')->get();
+        $modules = Module::query()->orderBy('sort_order')->get();
         $selectedRole = $this->resolveSelectedRole($request, $roles);
 
         return view('admincenter::assign.module_access_matrix', [
@@ -94,7 +94,7 @@ class AcAssignmentsController
         ]);
 
         $role = Role::query()->findOrFail($validated['role_id']);
-        $modules = Module::query()->orderBy('sort')->get();
+        $modules = Module::query()->orderBy('sort_order')->get();
         $modulePermissionNames = $this->buildModulePermissionNames($modules);
 
         $selected = collect($validated['permissions'] ?? [])

@@ -33,7 +33,8 @@ class AppServiceProvider extends ServiceProvider
                 if ($module) {
                     $menus = $module->menus()
                         ->where('is_active', true)
-                        ->orderBy('sort')
+                        ->orderBy('section')
+                        ->orderBy('sort_order')
                         ->get()
                         ->filter(function ($menu) {
                             if (! $menu->permission_name) {
@@ -44,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
                         });
 
                     $menuGroups = $menus->groupBy(function ($menu) {
-                        return $menu->group ?: 'Main';
+                        return $menu->section ?: 'MAIN';
                     });
 
                     $showAdminGroup = auth()->check() && (

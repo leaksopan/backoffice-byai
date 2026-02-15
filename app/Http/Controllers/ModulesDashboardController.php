@@ -14,7 +14,7 @@ class ModulesDashboardController extends Controller
 
         $modules = Module::query()
             ->where('is_active', true)
-            ->orderBy('sort')
+            ->orderBy('sort_order')
             ->get()
             ->filter(fn (Module $module) => $user && $user->can('access '.$module->key));
 

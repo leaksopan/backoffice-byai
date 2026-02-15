@@ -17,7 +17,7 @@
                     <div class="flex items-center justify-between">
                         <div class="text-lg font-semibold text-slate-900">{{ $module->name }}</div>
                         <div class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase text-slate-500">
-                            {{ $module->key }}
+                            {{ strtoupper($module->key) }}
                         </div>
                     </div>
                     @if ($module->description)

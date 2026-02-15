@@ -20,6 +20,12 @@
                 <div class="text-sm font-semibold text-slate-900">Permissions</div>
                 <div class="mt-2 text-xs text-slate-500">Manage permissions catalog</div>
             </a>
+            @can('modules.manage')
+                <a class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm hover:border-slate-300" href="{{ route('ac.modules.index') }}">
+                    <div class="text-sm font-semibold text-slate-900">Modules Management</div>
+                    <div class="mt-2 text-xs text-slate-500">Sort and hide/unhide modules</div>
+                </a>
+            @endcan
             <a class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm hover:border-slate-300" href="{{ route('ac.assign.module-access') }}">
                 <div class="text-sm font-semibold text-slate-900">Module Access Matrix</div>
                 <div class="mt-2 text-xs text-slate-500">Assign module permissions per role</div>

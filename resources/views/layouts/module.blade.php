@@ -43,7 +43,7 @@
                 </div>
                 <nav class="space-y-6 px-5 pb-8">
                     @forelse ($menuGroups as $group => $menus)
-                        @if ($group === 'Admin' && ! $showAdminGroup)
+                        @if (strtoupper($group) === 'ADMIN' && ! $showAdminGroup)
                             @continue
                         @endif
                         <div>
