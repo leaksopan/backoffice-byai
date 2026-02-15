@@ -3,7 +3,10 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $title ?? 'Modules Dashboard' }}</title>
+        <title>{{ $title ?? ('Modules Dashboard | '.setting('app.name', config('app.name'))) }}</title>
+        @if (setting('branding.favicon'))
+            <link rel="icon" href="{{ Storage::disk('public')->url(setting('branding.favicon')) }}">
+        @endif
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script>
             (() => {
@@ -31,7 +34,7 @@
             <header class="border-b border-slate-200/80 glass-panel dark:border-slate-700/80">
                 <div class="flex w-full items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
                     <div class="text-sm font-semibold uppercase tracking-[0.16em] text-slate-600 dark:text-slate-300">
-                        Modules Dashboard
+                        {{ setting('app.name', config('app.name')) }}
                     </div>
 
                     <div class="flex items-center gap-2">

@@ -3,7 +3,10 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $title ?? ($activeModule?->name ?? config('app.name', 'Modulify')) }}</title>
+        <title>{{ $title ?? ($activeModule?->name ? $activeModule->name.' | '.setting('app.name', config('app.name')) : setting('app.name', config('app.name'))) }}</title>
+        @if (setting('branding.favicon'))
+            <link rel="icon" href="{{ Storage::disk('public')->url(setting('branding.favicon')) }}">
+        @endif
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
         <script>
@@ -64,10 +67,10 @@
 
                     <a class="flex items-center gap-2" href="{{ route('modules.dashboard') }}">
                         <span class="flex h-9 w-9 items-center justify-center rounded-xl glass-chip text-slate-700 dark:text-slate-200">
-                            <x-application-logo class="h-6 w-6 fill-current" />
+                            <x-brand-logo class="h-6 w-6" />
                         </span>
                         <span class="text-sm font-semibold text-slate-700 dark:text-slate-200" x-cloak x-show="!sidebarCollapsed" x-transition.opacity>
-                            Modulify
+                            {{ setting('app.name', config('app.name')) }}
                         </span>
                     </a>
                 </div>
