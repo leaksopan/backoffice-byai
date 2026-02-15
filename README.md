@@ -65,7 +65,6 @@ Login with seeded admin:
 - `/dashboard-modules`
 - `/profile`
 - `/m/admin-center/dashboard`
-- `/m/project-management/dashboard`
 - `/m/settings/dashboard`
 - `/m/example-modules/dashboard`
 
@@ -76,7 +75,6 @@ Core seeded modules:
 - `admin-center`
 - `settings`
 - `example-modules`
-- `project-management`
 
 For each module key `{k}`, permissions are standardized:
 
@@ -93,7 +91,6 @@ Primary tables:
 - `modules`: module registry (`entry_route`, `sort_order`, `is_active`).
 - `module_menus`: module sidebar items (`module_key`, `section`, `permission_name`, `sort_order`).
 - `app_settings`: app key-value settings with cache-backed helper.
-- `module_forms`: dynamic form schemas (used by Project Management example).
 
 Seeder behavior:
 

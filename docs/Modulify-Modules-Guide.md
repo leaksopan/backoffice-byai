@@ -39,7 +39,7 @@ Route entry pattern:
 
 Insert one or more rows to `module_menus`:
 
-- `module_key`: module key (example `project-management`)
+- `module_key`: module key (example `example-modules`)
 - `section`: `MAIN` or `ADMIN`
 - `label`: menu label
 - `route_name`: named route target (nullable)

@@ -37,20 +37,12 @@ class DatabaseSeeder extends Seeder
                 'sort_order' => 0,
                 'is_active' => true,
             ],
-            'project-management' => [
-                'name' => 'Project Management',
-                'description' => 'Manage projects, milestones, and workflows.',
-                'icon' => 'heroicon-o-briefcase',
-                'entry_route' => 'pm.dashboard',
-                'sort_order' => 2,
-                'is_active' => true,
-            ],
             'example-modules' => [
                 'name' => 'Example Modules',
                 'description' => 'In-app developer guide for building new modules.',
                 'icon' => 'heroicon-o-squares-2x2',
                 'entry_route' => 'example.dashboard',
-                'sort_order' => 3,
+                'sort_order' => 2,
                 'is_active' => true,
             ],
             'settings' => [
@@ -100,6 +92,32 @@ class DatabaseSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
 
+        $removedModuleKeys = ['project-management', 'inventory'];
+        $removedPermissionNames = collect($removedModuleKeys)
+            ->flatMap(function (string $moduleKey) {
+                return [
+                    'access '.$moduleKey,
+                    $moduleKey.'.view',
+                    $moduleKey.'.create',
+                    $moduleKey.'.edit',
+                    $moduleKey.'.delete',
+                ];
+            })
+            ->values()
+            ->all();
+
+        $removedModuleIds = Module::query()
+            ->whereIn('key', $removedModuleKeys)
+            ->pluck('id');
+
+        if ($removedModuleIds->isNotEmpty()) {
+            ModuleForm::query()->whereIn('module_id', $removedModuleIds)->delete();
+        }
+
+        ModuleMenu::query()->whereIn('module_key', $removedModuleKeys)->delete();
+        Module::query()->whereIn('key', $removedModuleKeys)->delete();
+        Permission::query()->whereIn('name', $removedPermissionNames)->delete();
+
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $userRole = Role::firstOrCreate(['name' => 'user']);
         $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
@@ -113,8 +131,8 @@ class DatabaseSeeder extends Seeder
         $adminRole->syncPermissions($adminPermissionNames);
 
         $userRole->syncPermissions([
-            'access project-management',
-            'project-management.view',
+            'access example-modules',
+            'example-modules.view',
         ]);
 
         $adminUser = User::firstOrCreate(
@@ -219,48 +237,6 @@ class DatabaseSeeder extends Seeder
                     'is_active' => true,
                 ],
             ],
-            'project-management' => [
-                [
-                    'label' => 'Dashboard',
-                    'route_name' => 'pm.dashboard',
-                    'icon' => 'heroicon-o-home',
-                    'url' => null,
-                    'sort_order' => 1,
-                    'permission_name' => 'project-management.view',
-                    'section' => 'MAIN',
-                    'is_active' => true,
-                ],
-                [
-                    'label' => 'Projects',
-                    'route_name' => 'pm.projects.index',
-                    'icon' => 'heroicon-o-clipboard-document',
-                    'url' => null,
-                    'sort_order' => 2,
-                    'permission_name' => 'project-management.view',
-                    'section' => 'MAIN',
-                    'is_active' => true,
-                ],
-                [
-                    'label' => 'Create Project',
-                    'route_name' => 'pm.projects.create',
-                    'icon' => 'heroicon-o-plus',
-                    'url' => null,
-                    'sort_order' => 1,
-                    'permission_name' => 'project-management.create',
-                    'section' => 'ADMIN',
-                    'is_active' => true,
-                ],
-                [
-                    'label' => 'Settings',
-                    'route_name' => 'pm.settings',
-                    'icon' => 'heroicon-o-cog-6-tooth',
-                    'url' => null,
-                    'sort_order' => 2,
-                    'permission_name' => 'project-management.edit',
-                    'section' => 'ADMIN',
-                    'is_active' => true,
-                ],
-            ],
             'settings' => [
                 [
                     'label' => 'Dashboard',
@@ -332,78 +308,5 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        $schema = [
-            'type' => 'wizard',
-            'steps' => [
-                [
-                    'title' => 'Basic Info',
-                    'fields' => [
-                        [
-                            'type' => 'text',
-                            'name' => 'project_name',
-                            'label' => 'Project Name',
-                            'rules' => ['required'],
-                        ],
-                        [
-                            'type' => 'select',
-                            'name' => 'project_type',
-                            'label' => 'Project Type',
-                            'options' => [
-                                'internal' => 'Internal',
-                                'client' => 'Client',
-                            ],
-                        ],
-                        [
-                            'type' => 'text',
-                            'name' => 'client_name',
-                            'label' => 'Client Name',
-                            'visibleWhen' => [
-                                'field' => 'project_type',
-                                'operator' => 'equals',
-                                'value' => 'client',
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'title' => 'Planning',
-                    'fields' => [
-                        [
-                            'type' => 'textarea',
-                            'name' => 'description',
-                            'label' => 'Description',
-                        ],
-                        [
-                            'type' => 'repeater',
-                            'name' => 'milestones',
-                            'label' => 'Milestones',
-                            'itemSchema' => [
-                                [
-                                    'type' => 'text',
-                                    'name' => 'title',
-                                    'label' => 'Milestone Title',
-                                ],
-                                [
-                                    'type' => 'date',
-                                    'name' => 'due_date',
-                                    'label' => 'Due Date',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        ModuleForm::updateOrCreate(
-            ['module_id' => $modules->get('project-management')->id, 'key' => 'project-create'],
-            [
-                'module_id' => $modules->get('project-management')->id,
-                'key' => 'project-create',
-                'name' => 'Project Create Wizard',
-                'schema_json' => $schema,
-                'is_active' => true,
-            ]
-        );
     }
 }
