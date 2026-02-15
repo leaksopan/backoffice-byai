@@ -1,5 +1,9 @@
 {
-    "herd_mcp": false,
-    "mcp": true,
-    "sail": false
+    "agents": [
+        "codex"
+    ],
+    "skills": [
+        "livewire-development",
+        "tailwindcss-development"
+    ]
 }
