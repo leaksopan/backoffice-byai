@@ -4,8 +4,8 @@ namespace Modules\AdminCenter\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use Modules\AdminCenter\Http\Requests\StoreRoleRequest;
+use Modules\AdminCenter\Http\Requests\UpdateRoleRequest;
 use Spatie\Permission\Models\Role;
 
 class AcRolesController
@@ -28,11 +28,9 @@ class AcRolesController
         return view('admincenter::roles.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreRoleRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:roles,name'],
-        ]);
+        $validated = $request->validated();
 
         Role::create([
             'name' => $validated['name'],
@@ -51,20 +49,13 @@ class AcRolesController
         ]);
     }
 
-    public function update(Request $request, Role $role): RedirectResponse
+    public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
         if ($role->name === 'super-admin') {
             return back()->withErrors(['role' => 'Super admin role cannot be modified.']);
         }
 
-        $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('roles', 'name')->ignore($role->id),
-            ],
-        ]);
+        $validated = $request->validated();
 
         $role->update([
             'name' => $validated['name'],

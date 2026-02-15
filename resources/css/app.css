@@ -4,14 +4,30 @@
 
 @layer base {
     :root {
+        --app-bg-base: 248 250 252;
+        --app-bg-accent-a: 14 165 233;
+        --app-bg-accent-b: 59 130 246;
+        --app-bg-accent-c: 56 189 248;
+        --app-text: 15 23 42;
+        --app-muted: 71 85 105;
         --glass-bg: 255 255 255;
-        --glass-border: 226 232 240;
+        --glass-card-bg: 255 255 255;
+        --glass-soft-bg: 248 250 252;
+        --glass-border: 148 163 184;
         --glass-shadow: 15 23 42;
     }
 
     .dark {
+        --app-bg-base: 2 6 23;
+        --app-bg-accent-a: 14 116 144;
+        --app-bg-accent-b: 30 64 175;
+        --app-bg-accent-c: 14 165 233;
+        --app-text: 241 245 249;
+        --app-muted: 148 163 184;
         --glass-bg: 15 23 42;
-        --glass-border: 51 65 85;
+        --glass-card-bg: 2 6 23;
+        --glass-soft-bg: 15 23 42;
+        --glass-border: 71 85 105;
         --glass-shadow: 2 6 23;
     }
 
@@ -21,35 +37,136 @@
 }
 
 @layer utilities {
+    .app-bg,
     .bg-app-surface {
+        background-color: rgb(var(--app-bg-base));
         background-image:
-            radial-gradient(120rem 60rem at 0% 0%, rgba(56, 189, 248, 0.14), transparent 55%),
-            radial-gradient(100rem 50rem at 100% 100%, rgba(56, 189, 248, 0.1), transparent 50%),
-            linear-gradient(145deg, #f8fafc, #e2e8f0);
+            radial-gradient(120rem 60rem at 0% 0%, rgb(var(--app-bg-accent-a) / 0.18), transparent 55%),
+            radial-gradient(110rem 70rem at 100% 100%, rgb(var(--app-bg-accent-b) / 0.16), transparent 56%),
+            linear-gradient(145deg, rgb(var(--app-bg-base)), rgb(var(--app-bg-accent-c) / 0.08));
     }
 
-    .dark .bg-app-surface {
-        background-image:
-            radial-gradient(100rem 50rem at 0% 0%, rgba(14, 116, 144, 0.26), transparent 60%),
-            radial-gradient(100rem 60rem at 100% 100%, rgba(30, 64, 175, 0.2), transparent 55%),
-            linear-gradient(160deg, #020617, #0f172a);
-    }
-
+    .glass-surface,
     .glass-panel {
-        background: rgba(var(--glass-bg), 0.72);
-        border: 1px solid rgba(var(--glass-border), 0.74);
-        backdrop-filter: blur(14px);
-        box-shadow: 0 24px 55px -42px rgba(var(--glass-shadow), 0.5);
+        background: rgb(var(--glass-bg) / 0.72);
+        border: 1px solid rgb(var(--glass-border) / 0.58);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 24px 55px -42px rgb(var(--glass-shadow) / 0.52);
+    }
+
+    .glass-card {
+        border-radius: 1rem;
+        background: rgb(var(--glass-card-bg) / 0.82);
+        border: 1px solid rgb(var(--glass-border) / 0.68);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 20px 45px -36px rgb(var(--glass-shadow) / 0.54);
+    }
+
+    .glass-divider {
+        border-color: rgb(var(--glass-border) / 0.58);
     }
 
     .glass-soft {
-        background: rgba(var(--glass-bg), 0.58);
-        border: 1px solid rgba(var(--glass-border), 0.64);
+        background: rgb(var(--glass-soft-bg) / 0.66);
+        border: 1px solid rgb(var(--glass-border) / 0.62);
         backdrop-filter: blur(12px);
     }
 
     .glass-chip {
-        background: rgba(var(--glass-bg), 0.66);
-        border: 1px solid rgba(var(--glass-border), 0.72);
+        background: rgb(var(--glass-soft-bg) / 0.74);
+        border: 1px solid rgb(var(--glass-border) / 0.68);
+    }
+
+    .glass-tooltip {
+        border-radius: 0.75rem;
+        border: 1px solid rgb(var(--glass-border) / 0.64);
+        background: rgb(var(--glass-bg) / 0.78);
+        color: rgb(var(--app-text));
+        box-shadow: 0 18px 38px -28px rgb(var(--glass-shadow) / 0.65);
+        backdrop-filter: blur(14px);
+        white-space: nowrap;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2;
+        background-color: rgb(14 116 144);
+        border: 1px solid transparent;
+        color: rgb(248 250 252);
+    }
+
+    .btn-primary:hover {
+        background-color: rgb(2 132 199);
+    }
+
+    .btn-primary:focus {
+        --tw-ring-color: rgb(56 189 248 / 0.5);
+        --tw-ring-offset-color: transparent;
+    }
+
+    .dark .btn-primary {
+        background-color: rgb(56 189 248);
+        color: rgb(2 6 23);
+    }
+
+    .dark .btn-primary:hover {
+        background-color: rgb(125 211 252);
+    }
+
+    .btn-primary:disabled {
+        cursor: not-allowed;
+        opacity: 0.55;
+    }
+
+    .btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2;
+        background: rgb(var(--glass-soft-bg) / 0.72);
+        border: 1px solid rgb(var(--glass-border) / 0.62);
+        color: rgb(var(--app-text));
+    }
+
+    .btn-ghost:hover {
+        background: rgb(var(--glass-soft-bg) / 0.88);
+    }
+
+    .btn-ghost:focus {
+        --tw-ring-color: rgb(56 189 248 / 0.45);
+        --tw-ring-offset-color: transparent;
+    }
+
+    .input-glass {
+        @apply rounded-xl border px-3 py-2 text-sm shadow-sm transition duration-150 focus:outline-none focus:ring-2;
+        background: rgb(var(--glass-soft-bg) / 0.76);
+        border-color: rgb(var(--glass-border) / 0.74);
+        color: rgb(var(--app-text));
+    }
+
+    .input-glass::placeholder {
+        color: rgb(var(--app-muted) / 0.95);
+    }
+
+    .input-glass:focus {
+        border-color: rgb(56 189 248 / 0.95);
+        --tw-ring-color: rgb(56 189 248 / 0.35);
+    }
+
+    .dark .input-glass {
+        background: rgb(var(--glass-soft-bg) / 0.84);
+        border-color: rgb(var(--glass-border) / 0.82);
+    }
+
+    .table-glass {
+        overflow: hidden;
+        border-radius: 1rem;
+        border: 1px solid rgb(var(--glass-border) / 0.62);
+        background: rgb(var(--glass-card-bg) / 0.84);
+        backdrop-filter: blur(14px);
+    }
+
+    .table-glass thead {
+        background: rgb(var(--glass-soft-bg) / 0.88);
+    }
+
+    .table-glass tbody tr + tr {
+        border-top: 1px solid rgb(var(--glass-border) / 0.5);
     }
 }

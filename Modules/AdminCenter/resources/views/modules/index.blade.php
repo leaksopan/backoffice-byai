@@ -3,8 +3,8 @@
 @section('content')
     <div class="space-y-6">
         <div>
-            <h1 class="text-2xl font-semibold text-slate-900">Modules Management</h1>
-            <p class="mt-2 text-sm text-slate-600">Sort modules and control hide/unhide visibility.</p>
+            <h1 class="text-2xl font-semibold text-slate-900 dark:text-slate-50">Modules Management</h1>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Sort modules and control hide/unhide visibility.</p>
         </div>
 
         @if (session('status'))
@@ -13,9 +13,9 @@
             </div>
         @endif
 
-        <div class="overflow-hidden rounded-lg border border-slate-200 bg-white">
+        <div class="table-glass">
             <table class="min-w-full text-sm">
-                <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     <tr>
                         <th class="px-4 py-3">Module</th>
                         <th class="px-4 py-3">Entry Route</th>
@@ -28,28 +28,28 @@
                     @forelse ($modules as $module)
                         <tr>
                             <td class="px-4 py-3">
-                                <div class="font-medium text-slate-900">{{ $module->name }}</div>
-                                <div class="text-xs text-slate-500">{{ strtoupper($module->key) }}</div>
+                                <div class="font-medium text-slate-900 dark:text-slate-50">{{ $module->name }}</div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">{{ strtoupper($module->key) }}</div>
                             </td>
-                            <td class="px-4 py-3 text-slate-600">{{ $module->entry_route }}</td>
+                            <td class="px-4 py-3 text-slate-600 dark:text-slate-300">{{ $module->entry_route }}</td>
                             <td class="px-4 py-3">{{ $module->sort_order }}</td>
                             <td class="px-4 py-3">
                                 @if ($module->is_active)
                                     <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">ACTIVE</span>
                                 @else
-                                    <span class="rounded-full bg-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-700">HIDDEN</span>
+                                    <span class="rounded-full bg-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200">HIDDEN</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a class="rounded-md border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100" href="{{ route('ac.modules.edit', $module) }}">
+                                    <a class="rounded-md border border-slate-300/80 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200 transition hover:bg-slate-100/80 dark:border-slate-600 dark:hover:bg-slate-800/70" href="{{ route('ac.modules.edit', $module) }}">
                                         Edit
                                     </a>
                                     <form method="POST" action="{{ route('ac.modules.toggle', $module) }}">
                                         @csrf
                                         @method('PATCH')
                                         <input type="hidden" name="is_active" value="{{ $module->is_active ? 0 : 1 }}">
-                                        <button class="rounded-md border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100" type="submit">
+                                        <button class="rounded-md border border-slate-300/80 px-3 py-1 text-xs font-semibold text-slate-700 dark:text-slate-200 transition hover:bg-slate-100/80 dark:border-slate-600 dark:hover:bg-slate-800/70" type="submit">
                                             {{ $module->is_active ? 'Hide' : 'Unhide' }}
                                         </button>
                                     </form>
@@ -58,7 +58,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-slate-500">No modules found.</td>
+                            <td colspan="5" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400">No modules found.</td>
                         </tr>
                     @endforelse
                 </tbody>

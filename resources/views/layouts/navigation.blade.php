@@ -1,29 +1,47 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-14">
-            <div class="flex">
-                <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('modules.dashboard') }}">
-                        <x-brand-logo class="block h-8 w-auto text-gray-800" />
-                    </a>
-                </div>
-
+<nav
+    x-data="{ ...modulifyThemeState(), open: false }"
+    x-init="initTheme()"
+    class="border-b glass-surface glass-divider"
+>
+    <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <a class="inline-flex items-center gap-2 rounded-xl glass-soft px-3 py-2" href="{{ route('modules.dashboard') }}">
+                    <span class="flex h-8 w-8 items-center justify-center rounded-lg glass-chip">
+                        <x-brand-logo class="h-5 w-5" />
+                    </span>
+                    <span class="hidden text-xs font-semibold uppercase tracking-[0.16em] text-slate-700 dark:text-slate-200 sm:inline">
+                        {{ setting('app.name', config('app.name')) }}
+                    </span>
+                </a>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-1.5 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>{{ Auth::user()->name }}</div>
+            <div class="hidden items-center gap-2 sm:flex">
+                <button
+                    class="glass-soft inline-flex h-10 w-10 items-center justify-center rounded-xl text-slate-700 transition hover:text-slate-900 dark:text-slate-200 dark:hover:text-slate-50"
+                    type="button"
+                    @click="toggleTheme"
+                    aria-label="Toggle theme"
+                >
+                    <svg class="h-5 w-5" x-cloak x-show="themeMode === 'light'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <circle cx="12" cy="12" r="4" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v2m0 16v2m10-10h-2M4 12H2m16.2 7.8-1.4-1.4M7.2 7.2 5.8 5.8m12.4 0-1.4 1.4M7.2 16.8l-1.4 1.4" />
+                    </svg>
+                    <svg class="h-5 w-5" x-cloak x-show="themeMode === 'dark'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
+                    </svg>
+                </button>
 
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
+                <x-dropdown align="right" width="56">
+                    <x-slot name="trigger">
+                        <button class="btn-ghost px-3 py-2">
+                            <span class="inline-flex h-7 w-7 items-center justify-center rounded-full glass-chip text-xs font-semibold uppercase">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                            </span>
+                            <span class="hidden max-w-[10rem] truncate text-sm md:inline">{{ Auth::user()->name }}</span>
+                            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.2 7.2a.75.75 0 0 1 1.06 0L10 10.94l3.74-3.74a.75.75 0 1 1 1.06 1.06l-4.27 4.27a.75.75 0 0 1-1.06 0L5.2 8.26a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                            </svg>
                         </button>
                     </x-slot>
 
@@ -32,13 +50,13 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
-                        <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
 
-                            <x-dropdown-link :href="route('logout')"
-                                    onclick="event.preventDefault();
-                                                this.closest('form').submit();">
+                            <x-dropdown-link
+                                :href="route('logout')"
+                                onclick="event.preventDefault(); this.closest('form').submit();"
+                            >
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
                         </form>
@@ -46,39 +64,54 @@
                 </x-dropdown>
             </div>
 
-            <!-- Hamburger -->
-            <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            <div class="-me-1 flex items-center gap-2 sm:hidden">
+                <button
+                    class="glass-soft inline-flex h-10 w-10 items-center justify-center rounded-xl text-slate-700 transition hover:text-slate-900 dark:text-slate-200 dark:hover:text-slate-50"
+                    type="button"
+                    @click="toggleTheme"
+                    aria-label="Toggle theme"
+                >
+                    <svg class="h-5 w-5" x-cloak x-show="themeMode === 'light'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <circle cx="12" cy="12" r="4" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 2v2m0 16v2m10-10h-2M4 12H2m16.2 7.8-1.4-1.4M7.2 7.2 5.8 5.8m12.4 0-1.4 1.4M7.2 16.8l-1.4 1.4" />
+                    </svg>
+                    <svg class="h-5 w-5" x-cloak x-show="themeMode === 'dark'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
+                    </svg>
+                </button>
+
+                <button
+                    @click="open = ! open"
+                    class="glass-soft inline-flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-100"
+                >
+                    <svg class="h-5 w-5" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path :class="{ 'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        <path :class="{ 'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+    <div :class="{ 'block': open, 'hidden': ! open }" class="hidden border-t glass-divider sm:hidden">
+        <div class="space-y-3 px-4 pb-4 pt-3">
+            <div>
+                <div class="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{{ Auth::user()->name }}</div>
+                <div class="truncate text-xs text-slate-600 dark:text-slate-300">{{ Auth::user()->email }}</div>
             </div>
 
-            <div class="mt-3 space-y-1">
+            <div class="space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
-                <!-- Authentication -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
 
-                    <x-responsive-nav-link :href="route('logout')"
-                            onclick="event.preventDefault();
-                                        this.closest('form').submit();">
+                    <x-responsive-nav-link
+                        :href="route('logout')"
+                        onclick="event.preventDefault(); this.closest('form').submit();"
+                    >
                         {{ __('Log Out') }}
                     </x-responsive-nav-link>
                 </form>

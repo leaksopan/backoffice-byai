@@ -3,8 +3,8 @@
 @section('content')
     <div class="max-w-4xl space-y-6">
         <div>
-            <h1 class="text-2xl font-semibold text-slate-900">Assign Permissions to Role</h1>
-            <p class="mt-2 text-sm text-slate-600">Select a role and manage its permissions.</p>
+            <h1 class="text-2xl font-semibold text-slate-900 dark:text-slate-50">Assign Permissions to Role</h1>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Select a role and manage its permissions.</p>
         </div>
 
         @if (session('status'))
@@ -13,9 +13,9 @@
             </div>
         @endif
 
-        <form method="GET" action="{{ route('ac.assign.role-permissions') }}" class="rounded-lg border border-slate-200 bg-white p-6">
-            <label class="block text-sm font-medium text-slate-700">Select Role</label>
-            <select name="role_id" class="mt-2 w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500" onchange="this.form.submit()">
+        <form method="GET" action="{{ route('ac.assign.role-permissions') }}" class="glass-card p-6">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Select Role</label>
+            <select name="role_id" class="input-glass mt-2 w-full" onchange="this.form.submit()">
                 @foreach ($roles as $role)
                     <option value="{{ $role->id }}" @if ($selectedRole && $selectedRole->id === $role->id) selected @endif>
                         {{ $role->name }}
@@ -25,18 +25,18 @@
         </form>
 
         @if ($selectedRole)
-            <form class="space-y-4 rounded-lg border border-slate-200 bg-white p-6" method="POST" action="{{ route('ac.assign.role-permissions.save') }}">
+            <form class="space-y-4 glass-card p-6" method="POST" action="{{ route('ac.assign.role-permissions.save') }}">
                 @csrf
                 <input type="hidden" name="role_id" value="{{ $selectedRole->id }}">
 
                 <div class="grid gap-2 sm:grid-cols-2">
                     @foreach ($permissions as $permission)
-                        <label class="flex items-center gap-2 text-sm text-slate-700">
+                        <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-200">
                             <input
                                 type="checkbox"
                                 name="permissions[]"
                                 value="{{ $permission->name }}"
-                                class="rounded border-slate-300 text-slate-900 focus:ring-slate-500"
+                                class="rounded border-slate-300 bg-white/80 text-sky-600 focus:ring-sky-500 dark:border-slate-600 dark:bg-slate-900/70 dark:text-sky-400"
                                 @if ($selectedRole->permissions->pluck('name')->contains($permission->name)) checked @endif
                             >
                             {{ $permission->name }}
@@ -45,13 +45,13 @@
                 </div>
 
                 <div>
-                    <button class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" type="submit">
+                    <button class="btn-primary" type="submit">
                         Save Permissions
                     </button>
                 </div>
             </form>
         @else
-            <div class="rounded-lg border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
+            <div class="glass-card rounded-lg border border-dashed border-slate-300/80 p-6 text-sm text-slate-600 dark:border-slate-700/80 dark:text-slate-300">
                 No roles available.
             </div>
         @endif

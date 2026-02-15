@@ -2,11 +2,10 @@
 
 namespace Modules\Settings\Http\Controllers;
 
-use App\Models\AppSetting;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Modules\Settings\Http\Requests\UpdateBrandingRequest;
+use Modules\Settings\Services\BrandingSettingsService;
 
 class SettingsDashboardController
 {
@@ -28,44 +27,14 @@ class SettingsDashboardController
         ]);
     }
 
-    public function updateBranding(Request $request): RedirectResponse
+    public function updateBranding(UpdateBrandingRequest $request, BrandingSettingsService $brandingSettingsService): RedirectResponse
     {
-        $validated = $request->validate([
-            'app_name' => ['required', 'string', 'max:255'],
-            'tagline' => ['nullable', 'string', 'max:255'],
-            'logo_light' => ['nullable', 'file', 'mimes:jpg,jpeg,png,svg,webp', 'max:2048'],
-            'logo_dark' => ['nullable', 'file', 'mimes:jpg,jpeg,png,svg,webp', 'max:2048'],
-            'favicon' => ['nullable', 'file', 'mimes:png,ico,svg', 'max:1024'],
-        ]);
-
+        $validated = $request->validated();
         $userId = $request->user()?->id;
-
-        AppSetting::putValue('app.name', $validated['app_name'], 'string', 'app', $userId);
-        AppSetting::putValue('app.tagline', $validated['tagline'] ?? null, 'string', 'app', $userId);
-
-        $this->syncFileSetting($request, 'logo_light', 'branding.logo_light', $userId);
-        $this->syncFileSetting($request, 'logo_dark', 'branding.logo_dark', $userId);
-        $this->syncFileSetting($request, 'favicon', 'branding.favicon', $userId);
+        $brandingSettingsService->save($request, $validated, $userId);
 
         return redirect()
             ->route('settings.branding')
             ->with('status', 'Branding settings saved successfully.');
-    }
-
-    private function syncFileSetting(Request $request, string $inputName, string $settingKey, ?int $userId): void
-    {
-        if (! $request->hasFile($inputName)) {
-            return;
-        }
-
-        $oldPath = setting($settingKey);
-
-        if ($oldPath && Storage::disk('public')->exists($oldPath)) {
-            Storage::disk('public')->delete($oldPath);
-        }
-
-        $path = $request->file($inputName)->store('branding', 'public');
-
-        AppSetting::putValue($settingKey, $path, 'string', 'branding', $userId);
     }
 }

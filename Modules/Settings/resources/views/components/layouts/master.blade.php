@@ -16,12 +16,13 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        @include('partials.theme-init')
 
         {{-- Vite CSS --}}
         {{-- {{ module_vite('build-settings', 'resources/assets/sass/app.scss') }} --}}
     </head>
 
-    <body>
+    <body class="min-h-screen app-bg text-slate-900 dark:text-slate-100">
         {{ $slot }}
 
         {{-- Vite JS --}}

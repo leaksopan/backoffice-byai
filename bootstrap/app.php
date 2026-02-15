@@ -2,10 +2,10 @@
 
 use App\Console\Kernel as ConsoleKernel;
 use App\Http\Middleware\EnsureModuleAccess;
+use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withSingletons([

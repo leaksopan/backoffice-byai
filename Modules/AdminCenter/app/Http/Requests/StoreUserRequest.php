@@ -1,0 +1,25 @@
+<?php
+
+namespace Modules\AdminCenter\Http\Requests;
+
+use App\Models\User;
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreUserRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return (bool) $this->user()?->can('users.create');
+    }
+
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'string', 'min:8'],
+            'roles' => ['array'],
+            'roles.*' => ['integer', 'exists:roles,id'],
+        ];
+    }
+}

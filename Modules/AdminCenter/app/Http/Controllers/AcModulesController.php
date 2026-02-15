@@ -5,7 +5,8 @@ namespace Modules\AdminCenter\Http\Controllers;
 use App\Models\Module;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Modules\AdminCenter\Http\Requests\ToggleModuleRequest;
+use Modules\AdminCenter\Http\Requests\UpdateModuleRequest;
 
 class AcModulesController
 {
@@ -28,16 +29,9 @@ class AcModulesController
         ]);
     }
 
-    public function update(Request $request, Module $module): RedirectResponse
+    public function update(UpdateModuleRequest $request, Module $module): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'icon' => ['nullable', 'string', 'max:255'],
-            'entry_route' => ['required', 'string', 'max:255'],
-            'sort_order' => ['required', 'integer', 'min:0'],
-            'is_active' => ['nullable', 'boolean'],
-        ]);
+        $validated = $request->validated();
 
         $module->update([
             'name' => $validated['name'],
@@ -53,11 +47,9 @@ class AcModulesController
             ->with('status', 'Module updated successfully.');
     }
 
-    public function toggle(Request $request, Module $module): RedirectResponse
+    public function toggle(ToggleModuleRequest $request, Module $module): RedirectResponse
     {
-        $validated = $request->validate([
-            'is_active' => ['required', 'boolean'],
-        ]);
+        $validated = $request->validated();
 
         $module->update([
             'is_active' => (bool) $validated['is_active'],
