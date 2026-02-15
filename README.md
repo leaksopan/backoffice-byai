@@ -119,6 +119,16 @@ Branding values are read from helper:
 - `setting('branding.logo_dark')`
 - `setting('branding.favicon')`
 
+## Module Generator
+
+Generate a ready-to-use module (dashboard + sample Item CRUD + seeder + tests):
+
+```bash
+php artisan modulify:make "Inventory"
+php artisan modulify:make "Inventory" --with-crud --entity=Item --force
+php artisan test
+```
+
 ## Verify Commands
 
 ```bash
