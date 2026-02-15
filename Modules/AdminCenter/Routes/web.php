@@ -80,6 +80,14 @@ Route::prefix('m/admin-center')
             ->name('permissions.store')
             ->middleware('can:permissions.create')
             ->defaults('moduleKey', 'admin-center');
+        Route::get('/permissions/{permission}/edit', [AcPermissionsController::class, 'edit'])
+            ->name('permissions.edit')
+            ->middleware('can:permissions.edit')
+            ->defaults('moduleKey', 'admin-center');
+        Route::put('/permissions/{permission}', [AcPermissionsController::class, 'update'])
+            ->name('permissions.update')
+            ->middleware('can:permissions.edit')
+            ->defaults('moduleKey', 'admin-center');
         Route::delete('/permissions/{permission}', [AcPermissionsController::class, 'destroy'])
             ->name('permissions.destroy')
             ->middleware('can:permissions.delete')

@@ -5,6 +5,7 @@ namespace Modules\AdminCenter\Http\Controllers;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Permission;
 
 class AcPermissionsController
@@ -39,6 +40,33 @@ class AcPermissionsController
         return redirect()
             ->route('ac.permissions.index')
             ->with('status', 'Permission created successfully.');
+    }
+
+    public function edit(Permission $permission): View
+    {
+        return view('admincenter::permissions.edit', [
+            'permission' => $permission,
+        ]);
+    }
+
+    public function update(Request $request, Permission $permission): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('permissions', 'name')->ignore($permission->id),
+            ],
+        ]);
+
+        $permission->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()
+            ->route('ac.permissions.index')
+            ->with('status', 'Permission updated successfully.');
     }
 
     public function destroy(Permission $permission): RedirectResponse

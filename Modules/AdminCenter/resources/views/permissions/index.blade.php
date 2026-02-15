@@ -32,15 +32,22 @@
                     <tr>
                         <td class="px-4 py-3">{{ $permission->name }}</td>
                         <td class="px-4 py-3 text-right">
-                            @can('permissions.delete')
-                                <form class="inline" method="POST" action="{{ route('ac.permissions.destroy', $permission) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="rounded-md border border-rose-200 px-3 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50" type="submit">
-                                        Delete
-                                    </button>
-                                </form>
-                            @endcan
+                            <div class="flex justify-end gap-2">
+                                @can('permissions.edit')
+                                    <a class="rounded-md border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100" href="{{ route('ac.permissions.edit', $permission) }}">
+                                        Edit
+                                    </a>
+                                @endcan
+                                @can('permissions.delete')
+                                    <form class="inline" method="POST" action="{{ route('ac.permissions.destroy', $permission) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="rounded-md border border-rose-200 px-3 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50" type="submit">
+                                            Delete
+                                        </button>
+                                    </form>
+                                @endcan
+                            </div>
                         </td>
                     </tr>
                 @empty
