@@ -6,6 +6,10 @@ use App\Models\Module;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
+/**
+ * Core module entry controller.
+ * Redirects `/m/{moduleKey}` into module-specific `entry_route`.
+ */
 class ModuleEntryController extends Controller
 {
     public function enter(Request $request, string $moduleKey): RedirectResponse

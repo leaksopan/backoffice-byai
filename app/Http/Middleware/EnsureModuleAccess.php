@@ -7,6 +7,10 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Core module guard for all `/m/{moduleKey}` routes.
+ * Validates module existence, active status, and `access {moduleKey}` permission.
+ */
 class EnsureModuleAccess
 {
     /**

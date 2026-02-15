@@ -6,6 +6,10 @@ use App\Models\Module;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
+/**
+ * Core module launcher dashboard.
+ * Lists active modules ordered by DB sort with permission filtering.
+ */
 class ModulesDashboardController extends Controller
 {
     public function index(Request $request): View

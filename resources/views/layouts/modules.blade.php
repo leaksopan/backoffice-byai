@@ -1,3 +1,4 @@
+<!-- Modulify Modules Dashboard Layout: post-login launcher shell -->
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>

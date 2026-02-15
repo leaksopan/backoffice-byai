@@ -1,3 +1,4 @@
+<!-- Modulify Module Layout: DB-driven sidebar, topbar controls, and module page shell -->
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>

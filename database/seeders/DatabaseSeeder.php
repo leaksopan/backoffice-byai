@@ -13,6 +13,9 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
+/**
+ * Seeds Modulify core RBAC, module registry, menus, and dynamic form defaults.
+ */
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
@@ -24,6 +27,7 @@ class DatabaseSeeder extends Seeder
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
+        // Core module registry used by dashboard, module entry routing, and RBAC seeding.
         $moduleDefinitions = [
             'admin-center' => [
                 'name' => 'Admin Center',
@@ -39,6 +43,14 @@ class DatabaseSeeder extends Seeder
                 'icon' => 'heroicon-o-briefcase',
                 'entry_route' => 'pm.dashboard',
                 'sort_order' => 2,
+                'is_active' => true,
+            ],
+            'example-modules' => [
+                'name' => 'Example Modules',
+                'description' => 'In-app developer guide for building new modules.',
+                'icon' => 'heroicon-o-squares-2x2',
+                'entry_route' => 'example.dashboard',
+                'sort_order' => 3,
                 'is_active' => true,
             ],
             'settings' => [
@@ -123,6 +135,7 @@ class DatabaseSeeder extends Seeder
             ));
         }
 
+        // Sidebar menu configuration rendered by the shared module layout.
         $menusByModule = [
             'admin-center' => [
                 [
@@ -267,6 +280,38 @@ class DatabaseSeeder extends Seeder
                     'sort_order' => 2,
                     'permission_name' => 'settings.edit',
                     'section' => 'ADMIN',
+                    'is_active' => true,
+                ],
+            ],
+            'example-modules' => [
+                [
+                    'label' => 'Dashboard',
+                    'route_name' => 'example.dashboard',
+                    'icon' => 'heroicon-o-home',
+                    'url' => null,
+                    'sort_order' => 1,
+                    'permission_name' => 'example-modules.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'File Structure',
+                    'route_name' => 'example.files',
+                    'icon' => 'heroicon-o-clipboard-document',
+                    'url' => null,
+                    'sort_order' => 2,
+                    'permission_name' => 'example-modules.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Sidebar Config',
+                    'route_name' => 'example.sidebar',
+                    'icon' => 'heroicon-o-table-cells',
+                    'url' => null,
+                    'sort_order' => 3,
+                    'permission_name' => 'example-modules.view',
+                    'section' => 'MAIN',
                     'is_active' => true,
                 ],
             ],
