@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Module;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +13,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $helpersPath = app_path('Support/helpers.php');
+
+        if (file_exists($helpersPath)) {
+            require_once $helpersPath;
+        }
     }
 
     /**
@@ -33,7 +37,8 @@ class AppServiceProvider extends ServiceProvider
                 if ($module) {
                     $menus = $module->menus()
                         ->where('is_active', true)
-                        ->orderBy('sort')
+                        ->orderBy('section')
+                        ->orderBy('sort_order')
                         ->get()
                         ->filter(function ($menu) {
                             if (! $menu->permission_name) {
@@ -44,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
                         });
 
                     $menuGroups = $menus->groupBy(function ($menu) {
-                        return $menu->group ?: 'Main';
+                        return $menu->section ?: 'MAIN';
                     });
 
                     $showAdminGroup = auth()->check() && (

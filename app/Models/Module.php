@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Module extends Model
 {
@@ -13,7 +13,7 @@ class Module extends Model
         'description',
         'icon',
         'entry_route',
-        'sort',
+        'sort_order',
         'is_active',
     ];
 
@@ -23,7 +23,7 @@ class Module extends Model
 
     public function menus(): HasMany
     {
-        return $this->hasMany(ModuleMenu::class);
+        return $this->hasMany(ModuleMenu::class, 'module_key', 'key');
     }
 
     public function forms(): HasMany

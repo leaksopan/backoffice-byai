@@ -7,7 +7,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
+use Modules\AdminCenter\Http\Requests\StoreUserRequest;
+use Modules\AdminCenter\Http\Requests\UpdateUserRequest;
 use Spatie\Permission\Models\Role;
 
 class AcUsersController
@@ -33,15 +34,9 @@ class AcUsersController
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StoreUserRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'string', 'min:8'],
-            'roles' => ['array'],
-            'roles.*' => ['integer', 'exists:roles,id'],
-        ]);
+        $validated = $request->validated();
 
         $user = User::create([
             'name' => $validated['name'],
@@ -69,20 +64,9 @@ class AcUsersController
         ]);
     }
 
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                Rule::unique(User::class)->ignore($user->id),
-            ],
-            'password' => ['nullable', 'string', 'min:8'],
-            'roles' => ['array'],
-            'roles.*' => ['integer', 'exists:roles,id'],
-        ]);
+        $validated = $request->validated();
 
         $user->name = $validated['name'];
         $user->email = $validated['email'];

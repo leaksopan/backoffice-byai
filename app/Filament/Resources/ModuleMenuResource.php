@@ -20,24 +20,30 @@ class ModuleMenuResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('module_id')
+                Forms\Components\Select::make('module_key')
                     ->relationship('module', 'name')
                     ->required()
                     ->searchable(),
+                Forms\Components\Select::make('section')
+                    ->options([
+                        'MAIN' => 'MAIN',
+                        'ADMIN' => 'ADMIN',
+                    ])
+                    ->default('MAIN')
+                    ->required(),
                 Forms\Components\TextInput::make('label')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('route_name')
-                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('url')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('icon')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('sort')
+                Forms\Components\TextInput::make('sort_order')
                     ->numeric()
                     ->default(0),
                 Forms\Components\TextInput::make('permission_name')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('group')
                     ->maxLength(255),
                 Forms\Components\Toggle::make('is_active')
                     ->default(true),
@@ -55,11 +61,11 @@ class ModuleMenuResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('route_name')
                     ->label('Route'),
-                Tables\Columns\TextColumn::make('group')
-                    ->label('Group'),
+                Tables\Columns\TextColumn::make('section')
+                    ->label('Section'),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('sort')
+                Tables\Columns\TextColumn::make('sort_order')
                     ->sortable(),
             ])
             ->filters([

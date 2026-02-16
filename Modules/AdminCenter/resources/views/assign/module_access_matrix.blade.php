@@ -3,8 +3,8 @@
 @section('content')
     <div class="space-y-6">
         <div>
-            <h1 class="text-2xl font-semibold text-slate-900">Module Access Matrix</h1>
-            <p class="mt-2 text-sm text-slate-600">Assign module permissions per role.</p>
+            <h1 class="text-2xl font-semibold text-slate-900 dark:text-slate-50">Module Access Matrix</h1>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Assign module permissions per role.</p>
         </div>
 
         @if (session('status'))
@@ -13,9 +13,9 @@
             </div>
         @endif
 
-        <form method="GET" action="{{ route('ac.assign.module-access') }}" class="rounded-lg border border-slate-200 bg-white p-6">
-            <label class="block text-sm font-medium text-slate-700">Select Role</label>
-            <select name="role_id" class="mt-2 w-full rounded-lg border-slate-300 shadow-sm focus:border-slate-500 focus:ring-slate-500" onchange="this.form.submit()">
+        <form method="GET" action="{{ route('ac.assign.module-access') }}" class="glass-card p-6">
+            <label class="block text-sm font-medium text-slate-700 dark:text-slate-200">Select Role</label>
+            <select name="role_id" class="input-glass mt-2 w-full" onchange="this.form.submit()">
                 @foreach ($roles as $role)
                     <option value="{{ $role->id }}" @if ($selectedRole && $selectedRole->id === $role->id) selected @endif>
                         {{ $role->name }}
@@ -33,9 +33,9 @@
                 @csrf
                 <input type="hidden" name="role_id" value="{{ $selectedRole->id }}">
 
-                <div class="overflow-hidden rounded-lg border border-slate-200 bg-white">
+                <div class="table-glass">
                     <table class="min-w-full text-sm">
-                        <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                             <tr>
                                 <th class="px-4 py-3">Module</th>
                                 <th class="px-4 py-3">Access</th>
@@ -56,8 +56,8 @@
                                 @endphp
                                 <tr>
                                     <td class="px-4 py-3">
-                                        <div class="font-medium text-slate-900">{{ $module->name }}</div>
-                                        <div class="text-xs text-slate-500">{{ $module->key }}</div>
+                                        <div class="font-medium text-slate-900 dark:text-slate-50">{{ $module->name }}</div>
+                                        <div class="text-xs text-slate-500 dark:text-slate-400">{{ $module->key }}</div>
                                     </td>
                                     <td class="px-4 py-3">
                                         <input type="checkbox" name="permissions[]" value="{{ $access }}" @if (in_array($access, $rolePermissions, true)) checked @endif>
@@ -77,7 +77,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="px-4 py-8 text-center text-slate-500">No modules found.</td>
+                                    <td colspan="6" class="px-4 py-8 text-center text-slate-500 dark:text-slate-400">No modules found.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -85,13 +85,13 @@
                 </div>
 
                 <div class="mt-4">
-                    <button class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800" type="submit">
+                    <button class="btn-primary" type="submit">
                         Save Module Access
                     </button>
                 </div>
             </form>
         @else
-            <div class="rounded-lg border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
+            <div class="glass-card rounded-lg border border-dashed border-slate-300/80 p-6 text-sm text-slate-600 dark:border-slate-700/80 dark:text-slate-300">
                 No roles available.
             </div>
         @endif

@@ -1,4 +1,5 @@
 {
-    "ProjectManagement": true,
-    "AdminCenter": true
+    "AdminCenter": true,
+    "Settings": true,
+    "ExampleModules": true
 }

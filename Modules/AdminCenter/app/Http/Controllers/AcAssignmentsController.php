@@ -7,6 +7,10 @@ use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Modules\AdminCenter\Http\Requests\SaveModuleAccessRequest;
+use Modules\AdminCenter\Http\Requests\SaveRolePermissionsRequest;
+use Modules\AdminCenter\Http\Requests\SaveUserRolesRequest;
+use Modules\AdminCenter\Services\AssignmentService;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -25,17 +29,10 @@ class AcAssignmentsController
         ]);
     }
 
-    public function userRolesSave(Request $request): RedirectResponse
+    public function userRolesSave(SaveUserRolesRequest $request, AssignmentService $assignmentService): RedirectResponse
     {
-        $validated = $request->validate([
-            'user_id' => ['required', 'integer', 'exists:users,id'],
-            'roles' => ['array'],
-            'roles.*' => ['integer', 'exists:roles,id'],
-        ]);
-
-        $user = User::query()->findOrFail($validated['user_id']);
-        $roles = Role::query()->whereIn('id', $validated['roles'] ?? [])->get();
-        $user->syncRoles($roles);
+        $validated = $request->validated();
+        $user = $assignmentService->syncUserRoles($validated['user_id'], $validated['roles'] ?? []);
 
         return redirect()
             ->route('ac.assign.user-roles', ['user_id' => $user->id])
@@ -55,56 +52,34 @@ class AcAssignmentsController
         ]);
     }
 
-    public function rolePermissionsSave(Request $request): RedirectResponse
+    public function rolePermissionsSave(SaveRolePermissionsRequest $request, AssignmentService $assignmentService): RedirectResponse
     {
-        $validated = $request->validate([
-            'role_id' => ['required', 'integer', 'exists:roles,id'],
-            'permissions' => ['array'],
-            'permissions.*' => ['string', 'exists:permissions,name'],
-        ]);
-
-        $role = Role::query()->findOrFail($validated['role_id']);
-        $role->syncPermissions($validated['permissions'] ?? []);
+        $validated = $request->validated();
+        $role = $assignmentService->syncRolePermissions($validated['role_id'], $validated['permissions'] ?? []);
 
         return redirect()
             ->route('ac.assign.role-permissions', ['role_id' => $role->id])
             ->with('status', 'Role permissions updated.');
     }
 
-    public function moduleAccessMatrix(Request $request): View
+    public function moduleAccessMatrix(Request $request, AssignmentService $assignmentService): View
     {
         $roles = Role::query()->orderBy('name')->get();
-        $modules = Module::query()->orderBy('sort')->get();
+        $modules = Module::query()->orderBy('sort_order')->get();
         $selectedRole = $this->resolveSelectedRole($request, $roles);
 
         return view('admincenter::assign.module_access_matrix', [
             'roles' => $roles,
             'modules' => $modules,
             'selectedRole' => $selectedRole,
-            'modulePermissionNames' => $this->buildModulePermissionNames($modules),
+            'modulePermissionNames' => $assignmentService->buildModulePermissionNames($modules),
         ]);
     }
 
-    public function moduleAccessSave(Request $request): RedirectResponse
+    public function moduleAccessSave(SaveModuleAccessRequest $request, AssignmentService $assignmentService): RedirectResponse
     {
-        $validated = $request->validate([
-            'role_id' => ['required', 'integer', 'exists:roles,id'],
-            'permissions' => ['array'],
-            'permissions.*' => ['string'],
-        ]);
-
-        $role = Role::query()->findOrFail($validated['role_id']);
-        $modules = Module::query()->orderBy('sort')->get();
-        $modulePermissionNames = $this->buildModulePermissionNames($modules);
-
-        $selected = collect($validated['permissions'] ?? [])
-            ->intersect($modulePermissionNames)
-            ->values()
-            ->all();
-
-        $existing = $role->permissions->pluck('name')->all();
-        $keep = array_diff($existing, $modulePermissionNames->all());
-        $role->syncPermissions(array_unique(array_merge($keep, $selected)));
+        $validated = $request->validated();
+        $role = $assignmentService->syncModuleAccess($validated['role_id'], $validated['permissions'] ?? []);
 
         return redirect()
             ->route('ac.assign.module-access', ['role_id' => $role->id])
@@ -131,18 +106,5 @@ class AcAssignmentsController
         }
 
         return $roles->first();
-    }
-
-    private function buildModulePermissionNames($modules)
-    {
-        return $modules->flatMap(function (Module $module) {
-            return [
-                'access '.$module->key,
-                $module->key.'.view',
-                $module->key.'.create',
-                $module->key.'.edit',
-                $module->key.'.delete',
-            ];
-        })->values();
     }
 }

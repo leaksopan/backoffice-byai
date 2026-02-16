@@ -1,88 +1,143 @@
-# Modulify - Modular Laravel Starter (Modules Dashboard + RBAC + Liquid Glass)
+# Modulify
 
-Modulify is a modular Laravel starter kit designed for teams that need fast feature delivery with clean module boundaries, role-based access control, and centralized app settings. It ships with a module dashboard, admin tooling, and a reusable Liquid Glass UI layer so new modules can be added consistently.
+Production-ready modular platform built on Laravel with database-driven module registry, RBAC, and dynamic module navigation.
 
 ## Features
 
-- Modular architecture via `nwidart/laravel-modules` (`1 module = 1 folder`)
-- RBAC per module (`access` + CRUD permissions) via `spatie/laravel-permission`
-- Modules Dashboard that lists only modules the current user can access
-- Admin Center for users, roles, permissions, and module access management
-- Settings module for app branding (`name`, `logo`, `favicon`)
-- Liquid Glass theme with global CSS utilities
+- Laravel 12 + Breeze (Blade) authentication.
+- Modular architecture with `nwidart/laravel-modules`.
+- RBAC with `spatie/laravel-permission`.
+- Post-login launcher dashboard at `/dashboard-modules`.
+- DB-driven modules registry (`modules`) with ordering and hide/unhide.
+- DB-driven sidebar menus (`module_menus`) per module.
+- Admin Center for:
+  - Users CRUD
+  - Roles CRUD
+  - Permissions CRUD
+  - Role assignment to user
+  - Permission assignment to role
+  - Module Access Matrix
+  - Modules Management (sort + hide/unhide)
+- Liquid Glass UI shell with:
+  - Responsive sidebar
+  - Desktop collapsed mode with per-item tooltip
+  - Theme toggle (light/dark)
+- Settings module for global app branding:
+  - App name
+  - Tagline
+  - Logo light/dark
+  - Favicon
+- ExampleModules module as in-app developer guide.
 
-## Tech Stack
+## Stack
 
-- Laravel
-- Laravel Breeze (Blade)
-- Tailwind CSS
-- `nwidart/laravel-modules`
-- `spatie/laravel-permission`
+- PHP 8.2+
+- Laravel 12
+- Laravel Breeze (Blade + Alpine)
+- Tailwind CSS v3
+- Livewire 3
+- nwidart/laravel-modules
+- spatie/laravel-permission
+- Filament v3 (admin panel support)
 
-## Quick Start (Local)
+## Quickstart
 
 ```bash
 composer install
 cp .env.example .env
 php artisan key:generate
-touch database/database.sqlite
+php artisan storage:link
 php artisan migrate --seed
-npm install && npm run build
+npm install
+npm run build
 php artisan serve
 ```
 
-## Default Credentials
+Login with seeded admin:
 
-```text
-Email: admin@company.test
-Password: password
-```
+- Email: `admin@company.test`
+- Password: `password`
 
-## Important URLs
+## Core URLs
 
+- `/` -> redirect to `/login`
 - `/login`
 - `/dashboard-modules`
+- `/profile`
 - `/m/admin-center/dashboard`
 - `/m/settings/dashboard`
 - `/m/example-modules/dashboard`
 
-## Folder Structure (High-level)
+## Module Checklist
 
-```text
-Modules/<ModuleName>/...
-app/Http/Middleware/EnsureModuleAccess
-resources/views/layouts/module.blade.php
-database/seeders
+Core seeded modules:
+
+- `admin-center`
+- `settings`
+- `example-modules`
+
+For each module key `{k}`, permissions are standardized:
+
+- `access {k}`
+- `{k}.view`
+- `{k}.create`
+- `{k}.edit`
+- `{k}.delete`
+
+## Database Management
+
+Primary tables:
+
+- `modules`: module registry (`entry_route`, `sort_order`, `is_active`).
+- `module_menus`: module sidebar items (`module_key`, `section`, `permission_name`, `sort_order`).
+- `app_settings`: app key-value settings with cache-backed helper.
+
+Seeder behavior:
+
+- Creates roles: `super-admin`, `admin`, `user`.
+- Creates default admin account.
+- Seeds core modules + module menus.
+- Seeds module permissions and role assignments.
+
+## Theming
+
+Global theme uses Liquid Glass utility classes in `resources/css/app.css`.
+
+- Background: `bg-app-surface`
+- Panels: `glass-panel`
+- Soft controls: `glass-soft`
+- Chips/badges: `glass-chip`
+
+Branding values are read from helper:
+
+- `setting('app.name', config('app.name'))`
+- `setting('app.tagline')`
+- `setting('branding.logo_light')`
+- `setting('branding.logo_dark')`
+- `setting('branding.favicon')`
+
+## Module Generator
+
+Generate a ready-to-use module (dashboard + sample Item CRUD + seeder + tests):
+
+```bash
+php artisan modulify:make "Inventory"
+php artisan modulify:make "Inventory" --with-crud --entity=Item --force
+php artisan test
 ```
-
-## Adding a New Module
-
-1. Run `php artisan module:make <Name>`.
-2. Add routes with prefix `/m/<module-key>`.
-3. Add permissions: `access`, `view`, `create`, `edit`, `delete`.
-4. Seed `modules` table record (`name`, `key`, `entry_route`, `sort_order`, `is_active`).
-5. Seed `module_menus` entries.
-6. Assign permissions to roles.
-7. Test access control and sidebar visibility.
-
-## Modules List Management (DB)
-
-- `modules` table supports `sort_order` and `is_active` for ordering and hide/unhide behavior.
-- `module_menus` controls sidebar navigation items per module.
-
-## Theming Notes
-
-- Global CSS lives in `resources/css/app.css`.
-- Use `glass-*` utility classes such as `glass-card`, `glass-topbar`, `glass-sidebar`, and `glass-btn`.
 
 ## Verify Commands
 
 ```bash
 php artisan module:list
 php artisan migrate --seed
+php artisan route:list --path='m/'
 npm run build
+php artisan optimize:clear
 ```
 
-## License / Credits
+## Additional Guide
 
-MIT licensed. Built on Laravel with community packages from `nwidart/laravel-modules` and `spatie/laravel-permission`.
+See full module implementation guide:
+
+- `docs/Modulify-Modules-Guide.md`

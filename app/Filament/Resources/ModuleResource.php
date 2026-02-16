@@ -33,7 +33,7 @@ class ModuleResource extends Resource
                 Forms\Components\TextInput::make('entry_route')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('sort')
+                Forms\Components\TextInput::make('sort_order')
                     ->numeric()
                     ->default(0),
                 Forms\Components\Toggle::make('is_active')
@@ -54,7 +54,7 @@ class ModuleResource extends Resource
                     ->label('Entry Route'),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
-                Tables\Columns\TextColumn::make('sort')
+                Tables\Columns\TextColumn::make('sort_order')
                     ->sortable(),
             ])
             ->filters([

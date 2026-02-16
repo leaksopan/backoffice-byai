@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ModuleMenu extends Model
 {
     protected $fillable = [
-        'module_id',
+        'module_key',
+        'section',
         'label',
         'route_name',
+        'url',
         'icon',
-        'sort',
+        'sort_order',
         'permission_name',
-        'group',
         'is_active',
     ];
 
@@ -24,6 +25,6 @@ class ModuleMenu extends Model
 
     public function module(): BelongsTo
     {
-        return $this->belongsTo(Module::class);
+        return $this->belongsTo(Module::class, 'module_key', 'key');
     }
 }

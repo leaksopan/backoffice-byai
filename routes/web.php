@@ -6,9 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\EnsureModuleAccess;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::redirect('/', '/login');
 
 Route::get('/dashboard', function () {
     return redirect()->route('modules.dashboard');

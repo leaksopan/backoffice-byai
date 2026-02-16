@@ -13,6 +13,9 @@ use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
+/**
+ * Seeds Modulify core RBAC, module registry, menus, and dynamic form defaults.
+ */
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
@@ -24,21 +27,30 @@ class DatabaseSeeder extends Seeder
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
+        // Core module registry used by dashboard, module entry routing, and RBAC seeding.
         $moduleDefinitions = [
             'admin-center' => [
                 'name' => 'Admin Center',
                 'description' => 'User, Role & Permission management',
                 'icon' => '🛠',
                 'entry_route' => 'ac.dashboard',
-                'sort' => 0,
+                'sort_order' => 0,
                 'is_active' => true,
             ],
-            'project-management' => [
-                'name' => 'Project Management',
-                'description' => 'Manage projects, milestones, and workflows.',
-                'icon' => 'heroicon-o-briefcase',
-                'entry_route' => 'pm.dashboard',
-                'sort' => 1,
+            'example-modules' => [
+                'name' => 'Example Modules',
+                'description' => 'In-app developer guide for building new modules.',
+                'icon' => 'heroicon-o-squares-2x2',
+                'entry_route' => 'example.dashboard',
+                'sort_order' => 2,
+                'is_active' => true,
+            ],
+            'settings' => [
+                'name' => 'Settings',
+                'description' => 'Manage global branding and application options.',
+                'icon' => 'heroicon-o-cog-6-tooth',
+                'entry_route' => 'settings.dashboard',
+                'sort_order' => 1,
                 'is_active' => true,
             ],
         ];
@@ -71,6 +83,7 @@ class DatabaseSeeder extends Seeder
             'permissions.edit',
             'permissions.delete',
             'assignments.manage',
+            'modules.manage',
         ];
 
         $allPermissionNames = array_values(array_unique(array_merge($modulePermissions, $globalPermissions)));
@@ -78,6 +91,32 @@ class DatabaseSeeder extends Seeder
         foreach ($allPermissionNames as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
+
+        $removedModuleKeys = ['project-management', 'inventory'];
+        $removedPermissionNames = collect($removedModuleKeys)
+            ->flatMap(function (string $moduleKey) {
+                return [
+                    'access '.$moduleKey,
+                    $moduleKey.'.view',
+                    $moduleKey.'.create',
+                    $moduleKey.'.edit',
+                    $moduleKey.'.delete',
+                ];
+            })
+            ->values()
+            ->all();
+
+        $removedModuleIds = Module::query()
+            ->whereIn('key', $removedModuleKeys)
+            ->pluck('id');
+
+        if ($removedModuleIds->isNotEmpty()) {
+            ModuleForm::query()->whereIn('module_id', $removedModuleIds)->delete();
+        }
+
+        ModuleMenu::query()->whereIn('module_key', $removedModuleKeys)->delete();
+        Module::query()->whereIn('key', $removedModuleKeys)->delete();
+        Permission::query()->whereIn('name', $removedPermissionNames)->delete();
 
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $userRole = Role::firstOrCreate(['name' => 'user']);
@@ -92,8 +131,8 @@ class DatabaseSeeder extends Seeder
         $adminRole->syncPermissions($adminPermissionNames);
 
         $userRole->syncPermissions([
-            'access project-management',
-            'project-management.view',
+            'access example-modules',
+            'example-modules.view',
         ]);
 
         $adminUser = User::firstOrCreate(
@@ -114,107 +153,141 @@ class DatabaseSeeder extends Seeder
             ));
         }
 
+        // Sidebar menu configuration rendered by the shared module layout.
         $menusByModule = [
             'admin-center' => [
                 [
                     'label' => 'Dashboard',
                     'route_name' => 'ac.dashboard',
                     'icon' => 'heroicon-o-home',
-                    'sort' => 1,
+                    'url' => null,
+                    'sort_order' => 1,
                     'permission_name' => 'admin-center.view',
-                    'group' => 'Main',
+                    'section' => 'MAIN',
                     'is_active' => true,
                 ],
                 [
                     'label' => 'Users',
                     'route_name' => 'ac.users.index',
                     'icon' => 'heroicon-o-users',
-                    'sort' => 2,
+                    'url' => null,
+                    'sort_order' => 2,
                     'permission_name' => 'users.view',
-                    'group' => 'Main',
+                    'section' => 'MAIN',
                     'is_active' => true,
                 ],
                 [
                     'label' => 'Roles',
                     'route_name' => 'ac.roles.index',
                     'icon' => 'heroicon-o-shield-check',
-                    'sort' => 3,
+                    'url' => null,
+                    'sort_order' => 3,
                     'permission_name' => 'roles.view',
-                    'group' => 'Main',
+                    'section' => 'MAIN',
                     'is_active' => true,
                 ],
                 [
                     'label' => 'Permissions',
                     'route_name' => 'ac.permissions.index',
                     'icon' => 'heroicon-o-key',
-                    'sort' => 4,
+                    'url' => null,
+                    'sort_order' => 4,
                     'permission_name' => 'permissions.view',
-                    'group' => 'Main',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Modules Management',
+                    'route_name' => 'ac.modules.index',
+                    'icon' => 'heroicon-o-squares-2x2',
+                    'url' => null,
+                    'sort_order' => 5,
+                    'permission_name' => 'modules.manage',
+                    'section' => 'ADMIN',
                     'is_active' => true,
                 ],
                 [
                     'label' => 'Assign Roles to User',
                     'route_name' => 'ac.assign.user-roles',
                     'icon' => 'heroicon-o-user-plus',
-                    'sort' => 1,
+                    'url' => null,
+                    'sort_order' => 1,
                     'permission_name' => 'assignments.manage',
-                    'group' => 'Admin',
+                    'section' => 'ADMIN',
                     'is_active' => true,
                 ],
                 [
                     'label' => 'Assign Permissions to Role',
                     'route_name' => 'ac.assign.role-permissions',
                     'icon' => 'heroicon-o-rectangle-group',
-                    'sort' => 2,
+                    'url' => null,
+                    'sort_order' => 2,
                     'permission_name' => 'assignments.manage',
-                    'group' => 'Admin',
+                    'section' => 'ADMIN',
                     'is_active' => true,
                 ],
                 [
                     'label' => 'Module Access Matrix',
                     'route_name' => 'ac.assign.module-access',
                     'icon' => 'heroicon-o-table-cells',
-                    'sort' => 3,
+                    'url' => null,
+                    'sort_order' => 3,
                     'permission_name' => 'assignments.manage',
-                    'group' => 'Admin',
+                    'section' => 'ADMIN',
                     'is_active' => true,
                 ],
             ],
-            'project-management' => [
+            'settings' => [
                 [
                     'label' => 'Dashboard',
-                    'route_name' => 'pm.dashboard',
+                    'route_name' => 'settings.dashboard',
                     'icon' => 'heroicon-o-home',
-                    'sort' => 1,
-                    'permission_name' => 'project-management.view',
-                    'group' => 'Main',
+                    'url' => null,
+                    'sort_order' => 1,
+                    'permission_name' => 'settings.view',
+                    'section' => 'MAIN',
                     'is_active' => true,
                 ],
                 [
-                    'label' => 'Projects',
-                    'route_name' => 'pm.projects.index',
-                    'icon' => 'heroicon-o-clipboard-document',
-                    'sort' => 2,
-                    'permission_name' => 'project-management.view',
-                    'group' => 'Main',
-                    'is_active' => true,
-                ],
-                [
-                    'label' => 'Create Project',
-                    'route_name' => 'pm.projects.create',
-                    'icon' => 'heroicon-o-plus',
-                    'sort' => 1,
-                    'permission_name' => 'project-management.create',
-                    'group' => 'Admin',
-                    'is_active' => true,
-                ],
-                [
-                    'label' => 'Settings',
-                    'route_name' => 'pm.settings',
+                    'label' => 'Branding',
+                    'route_name' => 'settings.branding',
                     'icon' => 'heroicon-o-cog-6-tooth',
-                    'sort' => 2,
-                    'permission_name' => 'project-management.edit',
-                    'group' => 'Admin',
+                    'url' => null,
+                    'sort_order' => 2,
+                    'permission_name' => 'settings.edit',
+                    'section' => 'ADMIN',
+                    'is_active' => true,
+                ],
+            ],
+            'example-modules' => [
+                [
+                    'label' => 'Dashboard',
+                    'route_name' => 'example.dashboard',
+                    'icon' => 'heroicon-o-home',
+                    'url' => null,
+                    'sort_order' => 1,
+                    'permission_name' => 'example-modules.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'File Structure',
+                    'route_name' => 'example.files',
+                    'icon' => 'heroicon-o-clipboard-document',
+                    'url' => null,
+                    'sort_order' => 2,
+                    'permission_name' => 'example-modules.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Sidebar Config',
+                    'route_name' => 'example.sidebar',
+                    'icon' => 'heroicon-o-table-cells',
+                    'url' => null,
+                    'sort_order' => 3,
+                    'permission_name' => 'example-modules.view',
+                    'section' => 'MAIN',
                     'is_active' => true,
                 ],
             ],
@@ -229,84 +302,11 @@ class DatabaseSeeder extends Seeder
 
             foreach ($menus as $menu) {
                 ModuleMenu::updateOrCreate(
-                    ['module_id' => $module->id, 'route_name' => $menu['route_name']],
-                    array_merge($menu, ['module_id' => $module->id])
+                    ['module_key' => $module->key, 'label' => $menu['label']],
+                    array_merge($menu, ['module_key' => $module->key])
                 );
             }
         }
 
-        $schema = [
-            'type' => 'wizard',
-            'steps' => [
-                [
-                    'title' => 'Basic Info',
-                    'fields' => [
-                        [
-                            'type' => 'text',
-                            'name' => 'project_name',
-                            'label' => 'Project Name',
-                            'rules' => ['required'],
-                        ],
-                        [
-                            'type' => 'select',
-                            'name' => 'project_type',
-                            'label' => 'Project Type',
-                            'options' => [
-                                'internal' => 'Internal',
-                                'client' => 'Client',
-                            ],
-                        ],
-                        [
-                            'type' => 'text',
-                            'name' => 'client_name',
-                            'label' => 'Client Name',
-                            'visibleWhen' => [
-                                'field' => 'project_type',
-                                'operator' => 'equals',
-                                'value' => 'client',
-                            ],
-                        ],
-                    ],
-                ],
-                [
-                    'title' => 'Planning',
-                    'fields' => [
-                        [
-                            'type' => 'textarea',
-                            'name' => 'description',
-                            'label' => 'Description',
-                        ],
-                        [
-                            'type' => 'repeater',
-                            'name' => 'milestones',
-                            'label' => 'Milestones',
-                            'itemSchema' => [
-                                [
-                                    'type' => 'text',
-                                    'name' => 'title',
-                                    'label' => 'Milestone Title',
-                                ],
-                                [
-                                    'type' => 'date',
-                                    'name' => 'due_date',
-                                    'label' => 'Due Date',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        ModuleForm::updateOrCreate(
-            ['module_id' => $modules->get('project-management')->id, 'key' => 'project-create'],
-            [
-                'module_id' => $modules->get('project-management')->id,
-                'key' => 'project-create',
-                'name' => 'Project Create Wizard',
-                'schema_json' => $schema,
-                'is_active' => true,
-            ]
-        );
     }
 }

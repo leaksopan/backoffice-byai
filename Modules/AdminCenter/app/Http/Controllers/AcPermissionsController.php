@@ -4,7 +4,8 @@ namespace Modules\AdminCenter\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Modules\AdminCenter\Http\Requests\StorePermissionRequest;
+use Modules\AdminCenter\Http\Requests\UpdatePermissionRequest;
 use Spatie\Permission\Models\Permission;
 
 class AcPermissionsController
@@ -25,11 +26,9 @@ class AcPermissionsController
         return view('admincenter::permissions.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(StorePermissionRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:permissions,name'],
-        ]);
+        $validated = $request->validated();
 
         Permission::create([
             'name' => $validated['name'],
@@ -39,6 +38,26 @@ class AcPermissionsController
         return redirect()
             ->route('ac.permissions.index')
             ->with('status', 'Permission created successfully.');
+    }
+
+    public function edit(Permission $permission): View
+    {
+        return view('admincenter::permissions.edit', [
+            'permission' => $permission,
+        ]);
+    }
+
+    public function update(UpdatePermissionRequest $request, Permission $permission): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $permission->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()
+            ->route('ac.permissions.index')
+            ->with('status', 'Permission updated successfully.');
     }
 
     public function destroy(Permission $permission): RedirectResponse
