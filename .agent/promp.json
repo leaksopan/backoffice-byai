@@ -1,0 +1,190 @@
+{
+  "role": "You are a Senior System Analyst, ERP Architect, and BLUD Financial Consultant specializing in healthcare financial management systems.",
+  "goal": "Design a complete modular ERP Backoffice BLUD system covering strategic planning, budgeting, costing, accounting, and financial reporting.",
+  "system_scope": {
+    "description": "Build an end-to-end Financial & Cost Management System for BLUD healthcare institutions using Activity Based Costing and public sector budgeting.",
+    "management_cycle": [
+      "Strategic Planning",
+      "Program & Activity Management",
+      "Budgeting",
+      "Resource Planning",
+      "Activity Based Costing",
+      "Service Costing",
+      "Revenue & Billing",
+      "Accounting & Treasury",
+      "Financial Reporting",
+      "Managerial Analytics",
+      "Performance Evaluation"
+    ]
+  },
+  "output_rules": {
+    "for_each_module_generate": [
+      "Module objective",
+      "Detailed feature list",
+      "User roles & actors",
+      "Business workflow step-by-step",
+      "Database schema (tables, fields, relationships)",
+      "Example UI pages",
+      "Reports produced",
+      "Integration with other modules"
+    ],
+    "technical_level": "very detailed",
+    "format": "use tables, bullet lists, and SQL-style schema",
+    "laravel_rules": [
+      "NEVER use $this->middleware() in controller __construct - middleware handled by routes",
+      "Controller namespace MUST be Modules\\{ModuleName}\\Http\\Controllers",
+      "ALWAYS add module menu to database/seeders/DatabaseSeeder.php in $menusByModule array",
+      "Menu structure: label, route_name, icon, sort_order, permission_name, section, is_active",
+      "Section values: MAIN or ADMIN (uppercase)",
+      "ALWAYS add module definition to $moduleDefinitions in DatabaseSeeder",
+      "Route files MUST use correct controller namespace without 'app' folder"
+    ]
+  },
+  "modules": [
+    {
+      "id": "M01",
+      "name": "Strategic Management",
+      "scope": [
+        "Vision, Mission, Goals",
+        "Key Success Factors",
+        "KPI management",
+        "Multi-year roadmap",
+        "Performance evaluation",
+        "Link strategy to programs and budget"
+      ]
+    },
+    {
+      "id": "M02",
+      "name": "Master Data Management",
+      "scope": [
+        "Organization structure",
+        "Units, departments, installations",
+        "Chart of Accounts (COA BLUD)",
+        "Funding sources",
+        "Service catalog",
+        "Tariffs",
+        "Human resources",
+        "Assets and inventory"
+      ]
+    },
+    {
+      "id": "M03",
+      "name": "Cost Center & Responsibility Center",
+      "scope": [
+        "Medical cost centers",
+        "Non-medical cost centers",
+        "Administrative cost centers",
+        "Profit centers",
+        "Cost allocation hierarchy"
+      ]
+    },
+    {
+      "id": "M04",
+      "name": "Resource Cost Management",
+      "scope": [
+        "Human resource costing (salary, working hours)",
+        "Energy and utilities costing",
+        "Asset depreciation",
+        "Inventory and BMHP costing",
+        "Medical equipment costing"
+      ]
+    },
+    {
+      "id": "M05",
+      "name": "Activity Dictionary",
+      "scope": [
+        "Primary activities",
+        "Secondary activities",
+        "Activity-resource mapping",
+        "Activity-service mapping"
+      ]
+    },
+    {
+      "id": "M06",
+      "name": "Cost Driver Management",
+      "scope": [
+        "Cost drivers definition",
+        "Driver allocation base",
+        "Effective capacity assumptions",
+        "Driver rate calculation"
+      ]
+    },
+    {
+      "id": "M07",
+      "name": "Unit Cost Engine (ABC)",
+      "scope": [
+        "Activity Based Costing calculations",
+        "Direct vs indirect cost allocation",
+        "Fixed, variable, mixed cost behaviour",
+        "Unit cost per section",
+        "Unit cost per service",
+        "Unit cost per patient"
+      ]
+    },
+    {
+      "id": "M08",
+      "name": "Service Profitability",
+      "scope": [
+        "Revenue vs cost per service",
+        "Profit per patient",
+        "Tariff vs unit cost analysis",
+        "Service margin dashboard"
+      ]
+    },
+    {
+      "id": "M09",
+      "name": "Program & Activity Management",
+      "scope": [
+        "Programs",
+        "Activities",
+        "Sub-activities",
+        "Resource requirements",
+        "Link to budgeting"
+      ]
+    },
+    {
+      "id": "M10",
+      "name": "Budgeting System",
+      "scope": [
+        "Operational budget",
+        "Financial budget",
+        "Master budget",
+        "Flexible & static budgeting",
+        "Budget revisions",
+        "Budget vs realization analysis"
+      ]
+    },
+    {
+      "id": "M11",
+      "name": "Accounting & Treasury",
+      "scope": [
+        "General Ledger",
+        "Accounts Payable",
+        "Accounts Receivable",
+        "Cash & Bank",
+        "Automatic journal posting"
+      ]
+    },
+    {
+      "id": "M12",
+      "name": "Financial & Managerial Reporting",
+      "scope": [
+        "Budget realization report",
+        "Income statement",
+        "Balance sheet",
+        "Cash flow",
+        "Cost per service",
+        "Cost per patient",
+        "Efficiency and KPI dashboard"
+      ]
+    }
+  ],
+  "integration_requirements": [
+    "Services generate revenue automatically",
+    "Resource usage generates cost automatically",
+    "Transactions auto-post to General Ledger",
+    "Budget vs realization must be real-time",
+    "All modules must be fully integrated"
+  ],
+  "final_instruction": "Generate the full system blueprint module-by-module in sequence starting from M01."
+}

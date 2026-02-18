@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/strategicmanagement",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\StrategicManagement\\": "app/",
+            "Modules\\StrategicManagement\\Database\\Factories\\": "database/factories/",
+            "Modules\\StrategicManagement\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\StrategicManagement\\Tests\\": "tests/"
+        }
+    }
+}

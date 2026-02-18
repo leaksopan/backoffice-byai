@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Module;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -26,38 +29,47 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer('layouts.module', function ($view): void {
+            $module = request()->attributes->get('activeModule');
             $moduleKey = request()->route('moduleKey');
-            $module = null;
+
+            if (! $moduleKey && $module instanceof Module) {
+                $moduleKey = $module->key;
+            }
+
             $menuGroups = collect();
             $showAdminGroup = false;
 
-            if ($moduleKey) {
+            if (! $module && $moduleKey) {
                 $module = Module::query()->where('key', $moduleKey)->first();
+            }
 
-                if ($module) {
-                    $menus = $module->menus()
-                        ->where('is_active', true)
-                        ->orderBy('section')
-                        ->orderBy('sort_order')
-                        ->get()
-                        ->filter(function ($menu) {
-                            if (! $menu->permission_name) {
-                                return true;
-                            }
+            if ($module) {
+                $menus = $module->menus()
+                    ->where('is_active', true)
+                    ->orderBy('section')
+                    ->orderBy('sort_order')
+                    ->get()
+                    ->filter(function ($menu) {
+                        if (! Route::has($menu->route_name)) {
+                            return false;
+                        }
 
-                            return auth()->check() && auth()->user()->can($menu->permission_name);
-                        });
+                        if (! $menu->permission_name) {
+                            return true;
+                        }
 
-                    $menuGroups = $menus->groupBy(function ($menu) {
-                        return $menu->section ?: 'MAIN';
+                        return Auth::check() && Gate::allows($menu->permission_name);
                     });
 
-                    $showAdminGroup = auth()->check() && (
-                        auth()->user()->can($moduleKey.'.create')
-                        || auth()->user()->can($moduleKey.'.edit')
-                        || auth()->user()->can($moduleKey.'.delete')
-                    );
-                }
+                $menuGroups = $menus->groupBy(function ($menu) {
+                    return $menu->section ?: 'MAIN';
+                });
+
+                $showAdminGroup = Auth::check() && (
+                    Gate::allows($module->key.'.create')
+                    || Gate::allows($module->key.'.edit')
+                    || Gate::allows($module->key.'.delete')
+                );
             }
 
             $view->with([

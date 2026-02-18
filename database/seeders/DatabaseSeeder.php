@@ -53,6 +53,30 @@ class DatabaseSeeder extends Seeder
                 'sort_order' => 1,
                 'is_active' => true,
             ],
+            'strategic-management' => [
+                'name' => 'Strategic Management',
+                'description' => 'Visi, Misi, KPI, Roadmap & Evaluasi Kinerja BLUD',
+                'icon' => 'heroicon-o-light-bulb',
+                'entry_route' => 'sm.dashboard',
+                'sort' => 2,
+                'is_active' => true,
+            ],
+            'master-data-management' => [
+                'name' => 'Master Data Management',
+                'description' => 'Pengelolaan data referensi untuk seluruh sistem ERP BLUD',
+                'icon' => 'heroicon-o-database',
+                'entry_route' => 'mdm.dashboard',
+                'sort' => 3,
+                'is_active' => true,
+            ],
+            'cost-center-management' => [
+                'name' => 'Cost Center Management',
+                'description' => 'Manajemen Cost Center, Alokasi Biaya, dan Pelaporan',
+                'icon' => 'heroicon-o-building-office-2',
+                'entry_route' => 'ccm.dashboard.index',
+                'sort' => 4,
+                'is_active' => true,
+            ],
         ];
 
         $modulePermissions = collect($moduleDefinitions)
@@ -133,6 +157,10 @@ class DatabaseSeeder extends Seeder
         $userRole->syncPermissions([
             'access example-modules',
             'example-modules.view',
+            'access strategic-management',
+            'strategic-management.view',
+            'access master-data-management',
+            'master-data-management.view',
         ]);
 
         $adminUser = User::firstOrCreate(
@@ -153,7 +181,11 @@ class DatabaseSeeder extends Seeder
             ));
         }
 
-        // Sidebar menu configuration rendered by the shared module layout.
+        $legacyModule = Module::query()->where('key', 'master-data')->first();
+        if ($legacyModule) {
+            ModuleMenu::query()->where('module_id', $legacyModule->id)->delete();
+            $legacyModule->delete();
+        }
         $menusByModule = [
             'admin-center' => [
                 [
@@ -291,6 +323,192 @@ class DatabaseSeeder extends Seeder
                     'is_active' => true,
                 ],
             ],
+            'strategic-management' => [
+                [
+                    'label' => 'Dashboard',
+                    'route_name' => 'sm.dashboard',
+                    'icon' => 'heroicon-o-home',
+                    'sort_order' => 1,
+                    'permission_name' => 'strategic-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Visi & Misi',
+                    'route_name' => 'sm.visions.index',
+                    'icon' => 'heroicon-o-eye',
+                    'sort_order' => 2,
+                    'permission_name' => 'strategic-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'KPI',
+                    'route_name' => 'sm.kpis.index',
+                    'icon' => 'heroicon-o-chart-bar',
+                    'sort_order' => 3,
+                    'permission_name' => 'strategic-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Roadmap',
+                    'route_name' => 'sm.roadmap.index',
+                    'icon' => 'heroicon-o-map',
+                    'sort_order' => 4,
+                    'permission_name' => 'strategic-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Evaluasi',
+                    'route_name' => 'sm.evaluations.index',
+                    'icon' => 'heroicon-o-clipboard-document-check',
+                    'sort_order' => 5,
+                    'permission_name' => 'strategic-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Settings',
+                    'route_name' => 'sm.settings',
+                    'icon' => 'heroicon-o-cog-6-tooth',
+                    'sort_order' => 1,
+                    'permission_name' => 'strategic-management.edit',
+                    'section' => 'ADMIN',
+                    'is_active' => true,
+                ],
+            ],
+            'master-data-management' => [
+                [
+                    'label' => 'Dashboard',
+                    'route_name' => 'mdm.dashboard',
+                    'icon' => 'heroicon-o-home',
+                    'sort_order' => 1,
+                    'permission_name' => 'master-data-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Struktur Organisasi',
+                    'route_name' => 'mdm.organization-units.index',
+                    'icon' => 'heroicon-o-building-office',
+                    'sort_order' => 2,
+                    'permission_name' => 'master-data-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Chart of Accounts',
+                    'route_name' => 'mdm.coa.index',
+                    'icon' => 'heroicon-o-calculator',
+                    'sort_order' => 3,
+                    'permission_name' => 'master-data-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Sumber Dana',
+                    'route_name' => 'mdm.funding-sources.index',
+                    'icon' => 'heroicon-o-banknotes',
+                    'sort_order' => 4,
+                    'permission_name' => 'master-data-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Katalog Layanan',
+                    'route_name' => 'mdm.services.index',
+                    'icon' => 'heroicon-o-clipboard-document-list',
+                    'sort_order' => 5,
+                    'permission_name' => 'master-data-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Tarif Layanan',
+                    'route_name' => 'mdm.tariffs.index',
+                    'icon' => 'heroicon-o-currency-dollar',
+                    'sort_order' => 6,
+                    'permission_name' => 'master-data-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'SDM',
+                    'route_name' => 'mdm.human-resources.index',
+                    'icon' => 'heroicon-o-users',
+                    'sort_order' => 7,
+                    'permission_name' => 'master-data-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Aset',
+                    'route_name' => 'mdm.assets.index',
+                    'icon' => 'heroicon-o-cube',
+                    'sort_order' => 8,
+                    'permission_name' => 'master-data-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+            ],
+            'cost-center-management' => [
+                [
+                    'label' => 'Dashboard',
+                    'route_name' => 'ccm.dashboard.index',
+                    'icon' => 'heroicon-o-home',
+                    'sort_order' => 1,
+                    'permission_name' => 'cost-center-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Cost Centers',
+                    'route_name' => 'ccm.cost-centers.index',
+                    'icon' => 'heroicon-o-building-office-2',
+                    'sort_order' => 2,
+                    'permission_name' => 'cost-center-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Allocation Process',
+                    'route_name' => 'ccm.allocation-process.index',
+                    'icon' => 'heroicon-o-arrows-right-left',
+                    'sort_order' => 3,
+                    'permission_name' => 'cost-center-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Reports',
+                    'route_name' => 'ccm.reports.index',
+                    'icon' => 'heroicon-o-document-chart-bar',
+                    'sort_order' => 4,
+                    'permission_name' => 'cost-center-management.view',
+                    'section' => 'MAIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Approval - Allocation Rules',
+                    'route_name' => 'ccm.approval.allocation-rules',
+                    'icon' => 'heroicon-o-check-circle',
+                    'sort_order' => 1,
+                    'permission_name' => 'cost-center-management.edit',
+                    'section' => 'ADMIN',
+                    'is_active' => true,
+                ],
+                [
+                    'label' => 'Approval - Budget Revisions',
+                    'route_name' => 'ccm.budget-revisions.index',
+                    'icon' => 'heroicon-o-document-check',
+                    'sort_order' => 2,
+                    'permission_name' => 'cost-center-management.edit',
+                    'section' => 'ADMIN',
+                    'is_active' => true,
+                ],
+            ],
         ];
 
         foreach ($menusByModule as $moduleKey => $menus) {
@@ -308,5 +526,9 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        // Seed sample data
+        $this->call([
+            MasterDataSampleSeeder::class,
+        ]);
     }
 }

@@ -16,7 +16,7 @@ class EnsureModuleAccess
     /**
      * Handle an incoming request.
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ?string $moduleKey = null): Response
     {
         $moduleKey = $this->resolveModuleKey($request);
 

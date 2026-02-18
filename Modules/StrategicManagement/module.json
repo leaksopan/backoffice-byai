@@ -1,0 +1,11 @@
+{
+    "name": "StrategicManagement",
+    "alias": "strategicmanagement",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\StrategicManagement\\Providers\\StrategicManagementServiceProvider"
+    ],
+    "files": []
+}

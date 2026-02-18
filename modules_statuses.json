@@ -1,5 +1,8 @@
 {
     "AdminCenter": true,
     "Settings": true,
-    "ExampleModules": true
+    "ExampleModules": true,
+    "StrategicManagement": true,
+    "MasterDataManagement": true,
+    "CostCenterManagement": true
 }

@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/masterdatamanagement",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\MasterDataManagement\\": "app/",
+            "Modules\\MasterDataManagement\\Database\\Factories\\": "database/factories/",
+            "Modules\\MasterDataManagement\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\MasterDataManagement\\Tests\\": "tests/"
+        }
+    }
+}

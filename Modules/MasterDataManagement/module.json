@@ -1,0 +1,20 @@
+{
+    "name": "MasterDataManagement",
+    "alias": "masterdatamanagement",
+    "description": "Master Data Management - Pengelolaan data referensi untuk seluruh sistem ERP BLUD",
+    "keywords": [
+        "master-data",
+        "organization",
+        "coa",
+        "funding",
+        "service",
+        "tariff",
+        "hr",
+        "asset"
+    ],
+    "priority": 2,
+    "providers": [
+        "Modules\\MasterDataManagement\\Providers\\MasterDataManagementServiceProvider"
+    ],
+    "files": []
+}

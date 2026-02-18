@@ -1,0 +1,16 @@
+{
+    "name": "CostCenterManagement",
+    "alias": "costcentermanagement",
+    "description": "Cost Center & Responsibility Center Management Module",
+    "keywords": [
+        "cost-center",
+        "allocation",
+        "budgeting",
+        "abc-costing"
+    ],
+    "priority": 3,
+    "providers": [
+        "Modules\\CostCenterManagement\\Providers\\CostCenterManagementServiceProvider"
+    ],
+    "files": []
+}
