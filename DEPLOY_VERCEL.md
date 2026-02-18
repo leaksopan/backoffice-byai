@@ -59,6 +59,23 @@ Tambahkan di **Vercel → Project → Settings → Environment Variables**:
 - **Via dashboard:** setiap push ke branch yang terhubung akan auto-deploy.
 - **Via CLI:** dari root project jalankan `vercel` (atau `vercel --prod` untuk production).
 
+## Error: Command "composer install ..." exited with 127
+
+**Penyebab:** Di lingkungan build Vercel hanya tersedia Node.js; perintah `composer` (PHP) tidak ada, jadi exit code 127 = "command not found".
+
+**Solusi:** Install command di `vercel.json` sudah diset hanya `npm ci`. Agar Laravel jalan, dependency PHP (**vendor**) harus ikut ter-deploy. Caranya:
+
+1. **Commit folder `vendor`** (sekali saja, atau setiap kali ubah `composer.json`):
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   git add -f vendor
+   git commit -m "chore: add vendor for Vercel deploy"
+   git push
+   ```
+2. File **`.vercelignore`** jangan mengabaikan `vendor` (kalau `vendor` sudah di-commit, folder itu akan ikut di-upload Vercel).
+
+Kalau tidak mau commit `vendor`, deploy Laravel di platform yang mendukung PHP build (Railway, Render, Laravel Forge, Ploi).
+
 ## Catatan
 
 - **Trust proxies** sudah diaktifkan di `bootstrap/app.php` agar Laravel cocok dengan proxy Vercel (AWS).
